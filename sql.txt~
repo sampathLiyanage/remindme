@@ -1,0 +1,11 @@
+create table user(
+	id INT AUTO_INCREMENT NOT NULL,
+        user_name VARCHAR(30) NOT NULL,
+        password VARCHAR(100) NOT NULL,
+        frist_name VARCHAR(50) NOT NULL,
+        last_name VARCHAR (50) NOT NULL,
+        email VARCHAR(50) NOT NULL,
+        gmail VARCHAR(50),
+        google_token VARCHAR(100) NOT NULL,
+        PRIMARY KEY (id)
+);
