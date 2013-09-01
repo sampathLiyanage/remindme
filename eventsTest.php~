@@ -57,7 +57,12 @@ class Events_DBTest  extends PHPUnit_Framework_TestCase{
 	
 	}
 	
-	//for both subcriptions and unsubcriptions and getting subcriptions
+	/*
+	*for both subcriptions and unsubcriptions and getting subcriptions
+	*tests subcribeSchedule();
+	*tests unSubcribeSchedule();
+	*tests getSchSubcriptions();
+	*/
         public function testSchSubcriptions(){
                 $result= self::$eventsDb->getSchedulesOfOwner(self::$userId);
 		while ($row = $result->fetch_array(MYSQLI_NUM))
@@ -72,7 +77,7 @@ class Events_DBTest  extends PHPUnit_Framework_TestCase{
 		        $r= self::$eventsDb->getSchSubcriptions(self::$userId);
 		        while ($row1 = $r->fetch_array(MYSQLI_NUM)){
 		                $shdId=$row[0];
-		                $this->assertTrue($shdId=$id);
+		                $this->assertTrue($shdId==$id);
 		        }
 		       
 		        //unsubcribe schelule
@@ -82,8 +87,53 @@ class Events_DBTest  extends PHPUnit_Framework_TestCase{
 	        }
         }
         
+        public function testcreateSchEvent(){
+                $result= self::$eventsDb->getSchedulesOfOwner(self::$userId);
+		while ($row = $result->fetch_array(MYSQLI_NUM))
+                {       
+                         $id=$row[0];
+                         
+                        //create events for schedules
+		        $r= self::$eventsDb->createSchEvent($id, 'event 1', 'description 1', '2013-12-12' );
+		        $this->assertTrue($r);
+		        $r= self::$eventsDb->createSchEvent($id, 'event 2', 'description 2', '2013-12-12' );
+		        $this->assertTrue($r);
+	        }
+        }
         
-        public function testdeleteSchedule(){
+        
+        /*
+        *for testing three functions
+        *tests changeSchEvent(x);
+        *tests getSchEvents(x);
+        *tests deletSchEvent(x);
+        */
+        public function testGetAndChangeEvents(){
+                $result= self::$eventsDb->getSchedulesOfOwner(self::$userId);
+		while ($row = $result->fetch_array(MYSQLI_NUM))
+                {       
+                        $scheduleId=$row[0];
+                        
+                        //get events
+                        $result1= self::$eventsDb->getSchEvents($scheduleId);
+                        
+                        while ($row1 = $result1->fetch_array(MYSQLI_NUM))
+                        {       var_dump($row1[0]);
+                                 $eventId=$row1[0];
+                                 
+                                 //change an event
+		                 $r= self::$eventsDb->changeSchEvent($eventId, 'event - changed', 'description  changed', '2013-12-12' );
+		                 $this->assertTrue($r);
+		                 
+		                 //deletes an event
+		                 $r= self::$eventsDb->deleteSchEvent($eventId);
+		                 $this->assertTrue($r);
+	                }
+	        }
+        }
+        
+        
+        /*public function testdeleteSchedule(){
 		$result= self::$eventsDb->getSchedulesOfOwner(self::$userId);
 		while ($row = $result->fetch_array(MYSQLI_NUM))
                 {       
@@ -94,7 +144,7 @@ class Events_DBTest  extends PHPUnit_Framework_TestCase{
 		        $this->assertTrue($r);
 	        }
 	
-	}
+	}*/
 }
 
 

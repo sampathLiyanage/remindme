@@ -65,6 +65,18 @@ class Events_DB extends DB_connection{
 	}
 	
 	
+	/*
+	*deleting all the schedules
+	*for testing only!
+	*/
+	public function emptyDb(){
+	        $stmt = $this->prepareSqlStmt( "DELETE FROM schedule");
+		return $stmt->execute();
+	}
+	
+	
+	
+	
 	
 	
 	/*################# functions for "schedule_subcription" table #################*/
@@ -103,18 +115,67 @@ class Events_DB extends DB_connection{
 	public function getSchSubcriptions($userId){
 	
 		$stmt = $this->prepareSqlStmt( "SELECT * FROM schedule_subcription WHERE user_id=?");
-		$stmt->bind_param('ss', $userId);
+		$stmt->bind_param('s', $userId);
+		$stmt->execute();
+		return $stmt->get_result();
+	}
+	
+	
+	
+	
+	/*################# functions for "schedule_event" table #################*/
+	
+	/*
+	*for creating a schedule's event
+	*@input=> schedule id:int, name:string, description:string, dateTime:string
+	*@output=> if query changed the database:bool
+	*/
+	public function createSchEvent($scheduleId, $name, $decription, $dateTime){
+	
+		$stmt = $this->prepareSqlStmt( "INSERT INTO schedule_event (schedule_id, name, description, date_time)
+		 values (?,?,?,?)");
+		$stmt->bind_param('ssss', $scheduleId, $name, $decription, $dateTime);
+		return $stmt->execute();
+	}
+	
+	
+	/*
+	*for changing a schedule
+	*@input=> shedule id:int, user id:int, title:string, date expire:dateTime
+	*@output=> if query changed the database:bool
+	*/
+	public function changeSchEvent($id, $name, $description, $datetime){
+		
+		$stmt = $this->prepareSqlStmt( "UPDATE schedule_event 
+		SET name=?, description=?, date_time=? WHERE id=?");
+		$stmt->bind_param('ssss', $name, $description, $datetime, $id);
+		return $stmt->execute();
+	}
+	
+	
+	/*
+	*for getting events by schedule id
+	*@input=> schedule id:int
+	*@output=> list of events: sql result set
+	*/
+	public function getSchEvents($scheduleId){
+	
+		$stmt = $this->prepareSqlStmt( "SELECT * FROM schedule_event WHERE schedule_id=?");
+		$stmt->bind_param('s', $scheduleId);
 		$stmt->execute();
 		return $stmt->get_result();
 	}
 	
 	
 	/*
-	*deleting all the schedules
-	*for testing only!
+	*for deleting an event
+	*@input=> event id:int
+	*@output=> if query changed the database:bool
 	*/
-	public function emptyDb(){
-	        $stmt = $this->prepareSqlStmt( "DELETE FROM schedule");
+	public function deleteEvent($eventId){
+		
+		$stmt = $this->prepareSqlStmt( "DELETE FROM schedule_event WHERE id=?");
+		$stmt->bind_param('s', $eventId);
 		return $stmt->execute();
 	}
 }
