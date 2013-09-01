@@ -29,6 +29,12 @@ class Events_DBTest  extends PHPUnit_Framework_TestCase{
 		self::$userId= $row[0];
         }
         
+        public static function tearDownAfterClass(){
+                $result=self::$authDb->deleteAllUsers();
+		self::assertTrue($result);
+        }
+        
+        
         function testCreateSchedule(){
 		
 		//adding new schedules
@@ -58,7 +64,7 @@ class Events_DBTest  extends PHPUnit_Framework_TestCase{
 	}
 	
 	/*
-	*for both subcriptions and unsubcriptions and getting subcriptions
+	*for testing 3 functions
 	*tests subcribeSchedule();
 	*tests unSubcribeSchedule();
 	*tests getSchSubcriptions();
@@ -102,7 +108,8 @@ class Events_DBTest  extends PHPUnit_Framework_TestCase{
         }
         
         
-        /*
+        
+          /*
         *for testing three functions
         *tests changeSchEvent(x);
         *tests getSchEvents(x);
@@ -118,13 +125,13 @@ class Events_DBTest  extends PHPUnit_Framework_TestCase{
                         $result1= self::$eventsDb->getSchEvents($scheduleId);
                         
                         while ($row1 = $result1->fetch_array(MYSQLI_NUM))
-                        {       var_dump($row1[0]);
+                        {       
                                  $eventId=$row1[0];
                                  
                                  //change an event
 		                 $r= self::$eventsDb->changeSchEvent($eventId, 'event - changed', 'description  changed', '2013-12-12' );
 		                 $this->assertTrue($r);
-		                 
+
 		                 //deletes an event
 		                 $r= self::$eventsDb->deleteSchEvent($eventId);
 		                 $this->assertTrue($r);
@@ -132,6 +139,52 @@ class Events_DBTest  extends PHPUnit_Framework_TestCase{
 	        }
         }
         
+        
+        /*
+        *for testing 3 functions
+        *tests changeSchReminder(x);
+        *tests getSchReminders(x);
+        *tests deletSchReminder(x);
+        */
+        public function testGetChangeDeletReminders(){
+                //create some entries in database
+                $this->testcreateSchEvent();
+                
+                $result= self::$eventsDb->getSchedulesOfOwner(self::$userId);
+		while ($row = $result->fetch_array(MYSQLI_NUM))
+                {       
+                        $scheduleId=$row[0];
+                        
+                        //get events
+                        $result1= self::$eventsDb->getSchEvents($scheduleId);
+                        
+                        
+                        while ($row1 = $result1->fetch_array(MYSQLI_NUM))
+                        {       
+                                 $eventId=$row1[0];
+                                 
+                                 
+                                 //add a reminder
+		                 $r= self::$eventsDb->addSchReminder($eventId, '2013-12-12' );
+		                 $this->assertTrue($r);
+		                 
+		                 //get reminders
+                                $result2= self::$eventsDb->getSchReminders($eventId);
+                                
+                                while ($row2 = $result2->fetch_array(MYSQLI_NUM))
+                                {       
+                                         $reminderId=$row2[0];
+                                         
+                                         //delete a reminder
+	                                 $r= self::$eventsDb->deleteSchReminder($reminderId);
+	                                 $this->assertTrue($r);
+	                        }
+	                }
+	        }
+        }
+        
+        
+
         
         public function testdeleteSchedule(){
 		$result= self::$eventsDb->getSchedulesOfOwner(self::$userId);

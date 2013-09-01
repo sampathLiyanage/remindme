@@ -172,10 +172,51 @@ class Events_DB extends DB_connection{
 	*@input=> event id:int
 	*@output=> if query changed the database:bool
 	*/
-	public function deleteEvent($eventId){
+	public function deleteSchEvent($eventId){
 		
 		$stmt = $this->prepareSqlStmt( "DELETE FROM schedule_event WHERE id=?");
 		$stmt->bind_param('s', $eventId);
+		return $stmt->execute();
+	}
+	
+	
+	/*################# functions for "schedule_event" table #################*/
+	
+	/*
+	*for creating a event's reminder
+	*@input=> schedule event's id:int,  reminder's dateTime:string
+	*@output=> if query changed the database:bool
+	*/
+	public function addSchEvReminder($eventId, $dateTime){
+	
+		$stmt = $this->prepareSqlStmt( "INSERT INTO sch_event_reminder (sch_event_id, date_time)
+		 values (?,?)");
+		$stmt->bind_param('ss', $eventId, $dateTime);
+		return $stmt->execute();
+	}
+	
+	/*
+	*for getting reminders by event id
+	*@input=> event id:int
+	*@output=> list of reminders: sql result set
+	*/
+	public function getSchReminders($eventId){
+	
+		$stmt = $this->prepareSqlStmt( "SELECT * FROM sch_event_reminder WHERE sch_event_id=?");
+		$stmt->bind_param('s', $eventId);
+		$stmt->execute();
+		return $stmt->get_result();
+	}
+	
+	/*
+	*for deleting a reminder
+	*@input=> reminder id:int
+	*@output=> if query changed the database:bool
+	*/
+	public function deleteSchReminder($reminderId){
+		
+		$stmt = $this->prepareSqlStmt( "DELETE FROM sch_event_reminder WHERE id=?");
+		$stmt->bind_param('s', $reminderId);
 		return $stmt->execute();
 	}
 }
