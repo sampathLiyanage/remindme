@@ -163,25 +163,25 @@ class ScheduleManager{
                 $this->userId=$userId;
         }
         
-        public function createSchedule($schedule){
+        public createSchedule($schedule){
                 $eventsDb=new Events_DB;
                 $result=$eventsDb->createSchEvent($this->userId, $schedule->title, $schedule->description, $schedule->dateExpire);
                 return $result;
         }
         
-        public function changeSchedule($schedule){
+        public changeSchedule($schedule){
                 $eventsDb=new Events_DB;
                 $result=$eventsDb->changeSchedule($schedule->id, $schedule->title, $schedule->description, $schedule->dateExpire);
                 return $result;
         }
         
-        public function deleteSchedule($scheduleId){
+        public deleteSchedule($scheduleId){
                 $eventsDb=new Events_DB;
                 $result=$eventsDb->deleteSchedule($scheduleId);
                 return $result;
         }
         
-         public function getSchedulesOwned(){
+         public getSchedulesOwned(){
                 $eventsDb=new Events_DB;
                 $result=$eventsDb->getSchedulesOfOwner($this->userId);
                 if ($result===false){
@@ -200,7 +200,7 @@ class ScheduleManager{
                 }
         }
         
-        public function getScheduleIdsSubcribed(){
+        public getScheduleIdsSubcribed(){
                 $eventsDb=new Events_DB;
                 $result=$eventsDb->getSchSubcriptionsByUid($this->userId);
                 if ($result===false){

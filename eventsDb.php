@@ -15,11 +15,11 @@ class Events_DB extends DB_connection{
 	*@input=> user id:int, title:string, date expire:dateTime
 	*@output=> if query changed the database:bool
 	*/
-	public function createSchedule($userId, $title, $dateExpire){
+	public function createSchedule($userId, $title, $description, $dateExpire){
 		
-		$stmt = $this->prepareSqlStmt( "INSERT INTO schedule (user_id, title, date_created, date_updated, date_expire) 
-		VALUES (?,?,CURRENT_TIMESTAMP, CURRENT_TIMESTAMP ,?)");
-		$stmt->bind_param('sss', $userId, $title, $dateExpire);
+		$stmt = $this->prepareSqlStmt( "INSERT INTO schedule (user_id, title, description, date_created, date_updated, date_expire) 
+		VALUES (?,?,?,CURRENT_TIMESTAMP, CURRENT_TIMESTAMP ,?)");
+		$stmt->bind_param('ssss', $userId, $title, $description, $dateExpire);
 		return $stmt->execute();
 	}
 	
@@ -29,11 +29,11 @@ class Events_DB extends DB_connection{
 	*@input=> shedule id:int, user id:int, title:string, date expire:dateTime
 	*@output=> if query changed the database:bool
 	*/
-	public function changeSchedule($id, $title, $dateExpire){
+	public function changeSchedule($id, $title, $description, $dateExpire){
 		
 		$stmt = $this->prepareSqlStmt( "UPDATE schedule 
-		SET title=?, date_updated=CURRENT_TIMESTAMP, date_expire=? WHERE id=?");
-		$stmt->bind_param('sss', $title, $dateExpire, $id);
+		SET title=?, description=?, date_updated=CURRENT_TIMESTAMP, date_expire=? WHERE id=?");
+		$stmt->bind_param('ssss', $title, $description, $dateExpire, $id);
 		return $stmt->execute();
 	}
 	
@@ -112,10 +112,23 @@ class Events_DB extends DB_connection{
 	*@input=> user id:int
 	*@output=> list of schedule ids: sql result set
 	*/
-	public function getSchSubcriptions($userId){
+	public function getSchSubcriptionsByUid($userId){
 	
 		$stmt = $this->prepareSqlStmt( "SELECT * FROM schedule_subcription WHERE user_id=?");
 		$stmt->bind_param('s', $userId);
+		$stmt->execute();
+		return $stmt->get_result();
+	}
+	
+	/*
+	*for getting subcriptions by user id
+	*@input=> user id:int
+	*@output=> list of schedule ids: sql result set
+	*/
+	public function getSchSubcriptionsBySid($scheduleId){
+	
+		$stmt = $this->prepareSqlStmt( "SELECT * FROM schedule_subcription WHERE shedule_id=?");
+		$stmt->bind_param('s', $scheduleId);
 		$stmt->execute();
 		return $stmt->get_result();
 	}
@@ -180,7 +193,7 @@ class Events_DB extends DB_connection{
 	}
 	
 	
-	/*################# functions for "schedule_event" table #################*/
+	/*################# functions for "schedule_reminder" table #################*/
 	
 	/*
 	*for creating a event's reminder

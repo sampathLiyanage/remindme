@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Sep 01, 2013 at 09:33 AM
+-- Generation Time: Sep 02, 2013 at 08:33 AM
 -- Server version: 5.5.27
 -- PHP Version: 5.4.7
 
@@ -30,11 +30,13 @@ CREATE TABLE IF NOT EXISTS `schedule` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `title` varchar(50) NOT NULL,
+  `description` text NOT NULL,
   `date_created` datetime NOT NULL,
+  `date_updated` datetime NOT NULL,
   `date_expire` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
@@ -50,7 +52,7 @@ CREATE TABLE IF NOT EXISTS `schedule_event` (
   `date_time` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `schedule_id` (`schedule_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
 
 -- --------------------------------------------------------
 
@@ -77,7 +79,7 @@ CREATE TABLE IF NOT EXISTS `sch_event_reminder` (
   `date_time` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `sch_event_id` (`sch_event_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
 
 -- --------------------------------------------------------
 
@@ -93,14 +95,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `user_name` (`user_name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=146 ;
-
---
--- Dumping data for table `user`
---
-
-INSERT INTO `user` (`id`, `user_name`, `password`, `email`) VALUES
-(145, 'sampath', '5f4dcc3b5aa765d61d8327deb882cf99', 'plbsam@gmail.com');
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
 
 --
 -- Constraints for dumped tables
@@ -122,8 +117,8 @@ ALTER TABLE `schedule_event`
 -- Constraints for table `schedule_subcription`
 --
 ALTER TABLE `schedule_subcription`
-  ADD CONSTRAINT `schedule_subcription_ibfk_2` FOREIGN KEY (`shedule_id`) REFERENCES `schedule` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `schedule_subcription_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `schedule_subcription_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `schedule_subcription_ibfk_2` FOREIGN KEY (`shedule_id`) REFERENCES `schedule` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `sch_event_reminder`

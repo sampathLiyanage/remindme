@@ -2,6 +2,7 @@
 
 include_once "authDb.php";
 include_once "eventsDb.php";
+include_once "events.php";
 
 class Events_DBTest  extends PHPUnit_Framework_TestCase{
         static $eventsDb;
@@ -39,9 +40,9 @@ class Events_DBTest  extends PHPUnit_Framework_TestCase{
 		
 		//adding new schedules
 		
-		$result= self::$eventsDb->createSchedule(self::$userId, 'my schedule 1','2013-12-12');
+		$result= self::$eventsDb->createSchedule(self::$userId, 'my schedule 1', 'descriptn 1', '2013-12-12');
 		$this->assertTrue($result);
-		$result= self::$eventsDb->createSchedule(self::$userId, 'my schedule 2','2013-12-13');
+		$result= self::$eventsDb->createSchedule(self::$userId, 'my schedule 2', 'descriptn 2', '2013-12-13');
 		$this->assertTrue($result);
 	}
 	
@@ -53,11 +54,13 @@ class Events_DBTest  extends PHPUnit_Framework_TestCase{
                 {       
                          $id=$row[0];
                          $title=$row[2]."changed";
-                         $date=$row[5];
+                         $descriptn=$row[3]."changed";
+                         $date=$row[6];
                          
                          //changing an exsisting schedule;
-		        $r= self::$eventsDb->changeSchedule($id, $title, $date);
+		        $r= self::$eventsDb->changeSchedule($id, $title,$descriptn, $date);
 		        $this->assertTrue($r);
+		        
 		        
 	        }
 	
@@ -79,11 +82,18 @@ class Events_DBTest  extends PHPUnit_Framework_TestCase{
 		        $r= self::$eventsDb->subcribeSchedule(self::$userId, $id);
 		        $this->assertTrue($r);
 		        
-		        //get subciptions
-		        $r= self::$eventsDb->getSchSubcriptions(self::$userId);
+		        //get subciptions by userId
+		        $r= self::$eventsDb->getSchSubcriptionsByUid(self::$userId);
 		        while ($row1 = $r->fetch_array(MYSQLI_NUM)){
-		                $shdId=$row[0];
+		                $shdId=$row1[1];
 		                $this->assertTrue($shdId==$id);
+		                
+		                ////get subciptions by scheduleId
+		                $r1= self::$eventsDb->getSchSubcriptionsBySid($shdId);
+		                while ($row2 = $r1->fetch_array(MYSQLI_NUM)){
+		                        $userId=$row2[0];
+		                        $this->assertTrue(self::$userId==$userId);
+		                }
 		        }
 		       
 		        //unsubcribe schelule
@@ -202,5 +212,54 @@ class Events_DBTest  extends PHPUnit_Framework_TestCase{
 
 
 
+
+
+
+
+
+
+/**
+*test functions related to schedules in events.php
+*/
+class ScheduleTest  extends PHPUnit_Framework_TestCase{
+        static $eventsDb;
+        static $authDb;
+        static $userId;
+        
+        public static function setUpBeforeClass(){
+                //empty the schedule table
+		self::$eventsDb= new Events_DB;
+		$result=self::$eventsDb->emptyDb();
+		self::assertTrue($result);
+		
+		//empty the user table
+		self::$authDb= new Auth_DB;
+		$result= self::$authDb->deleteAllUsers();
+		self::assertTrue($result);
+		
+		//create a user
+		$result=self::$authDb->createUser('sampath', 'password', 'plbsam@gmail.com');
+		self::assertTrue($result);
+                
+                //store the user's id
+                $result= self::$authDb->getUserId('sampath');
+		$row = $result->fetch_array(MYSQLI_NUM);
+		self::$userId= $row[0];
+        }
+        
+        public static function tearDownAfterClass(){
+                $result=self::$authDb->deleteAllUsers();
+		self::assertTrue($result);
+		
+		$result=self::$eventsDb->emptyDb();
+		self::assertTrue($result);
+        }
+        
+        public function testSchedule(){
+                //create a new schedule
+                $schedule=new Schedule(self::$userId, 'testing schedule 1', 'this schedule is created for testing','2013-01-01');
+                
+        }
+}
 
 ?>
