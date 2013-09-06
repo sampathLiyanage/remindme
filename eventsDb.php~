@@ -52,6 +52,21 @@ class Events_DB extends DB_connection{
 	}
 	
 	
+	/*
+	*for fetching l schedule of a user
+
+	*@input=> user id:int, schedule id:int
+	*@output=> schedule: sql result set
+	*/
+	public function getScheduleOfOwner($userId, $scheduleId){
+		
+		$stmt = $this->prepareSqlStmt( "SELECT * FROM schedule WHERE user_id=? AND id=?");
+		$stmt->bind_param('ss', $userId, $scheduleId);
+		$stmt->execute();
+		return $stmt->get_result();
+	}
+	
+	
         /*
 	*for deleting a schedule
 	*@input=> schedule id:int
@@ -127,7 +142,7 @@ class Events_DB extends DB_connection{
 	*/
 	public function getSchSubcriptionsBySid($scheduleId){
 	
-		$stmt = $this->prepareSqlStmt( "SELECT * FROM schedule_subcription WHERE schedule_id=?");
+		$stmt = $this->prepareSqlStmt( "SELECT * FROM schedule_subcription WHERE shedule_id=?");
 		$stmt->bind_param('s', $scheduleId);
 		$stmt->execute();
 		return $stmt->get_result();
@@ -231,6 +246,21 @@ class Events_DB extends DB_connection{
 		$stmt = $this->prepareSqlStmt( "DELETE FROM sch_event_reminder WHERE id=?");
 		$stmt->bind_param('s', $reminderId);
 		return $stmt->execute();
+	}
+	
+	/*
+	*for get user_id of a reminder
+	*@input=> reminder id:int
+	*@output=> user id: sql result set
+	*/
+	public function getSchReminderUser($reminderId){
+	        $stmt = $this->prepareSqlStmt( "SELECT user_id FROM schedule, schedule_event, sch_event_reminder
+	                                        WHERE sch_event_reminder.sch_event_id=schedule_event.id
+	                                        AND schedule_event.schedule_id=schedule.id
+	                                        AND schedule.user_id=?");
+	        $stmt->bind_param('s', $reminderId);
+		$stmt->execute();
+		return $stmt->get_result();
 	}
 }
 ?>

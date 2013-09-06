@@ -8,13 +8,25 @@ include_once "eventsDb.php";
 /**
 *represents a reminder
 */	
-class Schedule_reminder{
-        public $id;
+
+class Schedule_reminder_temp{
+	private $eventId;
 	public $dateTime;
-	public $eventId;
+	
 	
 	public function __construct($eventId, $dateTime){
+	        $this->eventId=$eventId;
                 $this->dateTime=$dateTime;
+        }	
+}
+
+class Schedule_reminder extends Schedule_reminder_temp{
+        public $id;
+	
+	public function __construct($eventId, $id, $dateTime){
+	        $this->id=$id;
+                $this->dateTime=$dateTime;
+                parent::__construct($eventId, $dateTime);
         }	
 }
 
@@ -22,17 +34,27 @@ class Schedule_reminder{
 /**
 *represents an event
 */	
-class Schedule_event{
-	public $id;
+class Schedule_event_temp{
+	private $scheduleId;
 	public $name;
 	public $description;
 	public $dateTime;
-	private $reminders;
 	
-	public function __construct($name, $description, $dateTime){
+	public function __construct($scheduleId, $name, $description, $dateTime){
+	        $this->scheduleId=$scheduleId;
                 $this->name=$name;
                 $this->description=$description;
                 $this->dateTime=$dateTime;
+        }
+}
+
+
+class Schedule_event extends Schedule_event_temp{
+	public $id;
+	
+	public function __construct($scheduleId, $id, $name, $description, $dateTime){
+                $this->id=$id;
+                parent::__construct($scheduleId, $name, $description, $dateTime);
         }
         
         public function getReminders($eventId){
@@ -44,12 +66,10 @@ class Schedule_event{
                         $i=0;
                         while ($row = $result->fetch_array(MYSQLI_NUM))
                         {       
-                                 $this->reminders[$i]=new Schedule_reminder($row[1],$row[2]);
-                                 $this->reminders[$i]->id=$row[0];
-                                 
+                                 $reminders[$i]=new Schedule_reminder($row[1], $row[0], $row[2],$row[3]);
                                  $i=$i+1;
                         }
-                        return $this->reminders;
+                        return $reminders;
                 }
         }
         
@@ -71,39 +91,47 @@ class Schedule_event{
 /**
 *represent a schedule
 */
-class Schedule{
-	public $id;
+class Schedule_temp{
 	public $userId;
 	public $title;
 	public $description;
-	public $dateCreated;
-	public $dateUpdated;
 	public $dateExpire;
-	private $events;
-	private $subcriptions;
 	
 	public function __construct($userId, $title, $description, $dateExpire){
                 $this->userId=$userId;
                 $this->title=$title;
                 $this->description=$description;
                 $this->dateExpire=$dateExpire;
+        }      
+}
+
+class Schedule extends Schedule_temp{
+	public $id;
+	public $dateCreated;
+	public $dateUpdated;
+	
+	public function __construct($userId, $id, $title, $description, $dateCreated, $dateUpdated, $dateExpire){
+                $this->id=$id;
+                $this->dateCreated=$dateCreated;
+                $this->dateUpdated=$dateUpdated;
+                
+                parent::__construct($userId, $title, $description, $dateExpire);
         }
         
-        public function getEvents($scheduleId){
+        public function getEvents(){
                 $eventsDb=new Events_DB;
-                $result=$eventsDb->getSchReminders($scheduleId);
+                $result=$eventsDb->getSchEvents($this->id);
                 if ($result===false){
                         return false;
                 } else{
                         $i=0;
                         while ($row = $result->fetch_array(MYSQLI_NUM))
                         {       
-                                 $this->events[$i]=new Schedule_event($row[1],$row[2],$row[3]);
-                                 $this->events[$i]->id=$row[0];
-                                 
+                                 $events[$i]=new Schedule_event($row[1],$row[0],$row[2],$row[3],$row[4]);
+                               
                                  $i=$i+1;
                         }
-                        return $this->events;
+                        return $events;
                 }
         }
         
@@ -116,6 +144,12 @@ class Schedule{
         public function removeEvent($id){
                 $eventsDb=new Events_DB;
                 $result=$eventsDb->deleteSchEvent($id);
+                return $result;
+        }
+        
+        public function changeEvent($event){
+                $eventsDb=new Events_DB;
+                $result=$eventsDb->changeSchEvent($event->id, $event->name, $event->description, $event->dateTime);
                 return $result;
         }
         
@@ -151,37 +185,38 @@ class Schedule{
 }
 
 
+
 /**
 *represent a schedule manager
 */
 class ScheduleManager{
         private $userId;
-        private $shedules;
-        private $sheduleIds;
         
         public function __construct($userId){
                 $this->userId=$userId;
         }
         
-        public createSchedule($schedule){
+        public function createSchedule($schedule){
                 $eventsDb=new Events_DB;
-                $result=$eventsDb->createSchEvent($this->userId, $schedule->title, $schedule->description, $schedule->dateExpire);
+                $result=$eventsDb->createSchedule($this->userId, $schedule->title, $schedule->description, $schedule->dateExpire);
                 return $result;
         }
         
-        public changeSchedule($schedule){
+        public function changeSchedule($schedule){
                 $eventsDb=new Events_DB;
+                var_dump($schedule->dateExpire);
                 $result=$eventsDb->changeSchedule($schedule->id, $schedule->title, $schedule->description, $schedule->dateExpire);
                 return $result;
         }
         
-        public deleteSchedule($scheduleId){
+        public function deleteSchedule($scheduleId){
                 $eventsDb=new Events_DB;
                 $result=$eventsDb->deleteSchedule($scheduleId);
                 return $result;
         }
         
-         public getSchedulesOwned(){
+        
+         public function getSchedulesOwned(){
                 $eventsDb=new Events_DB;
                 $result=$eventsDb->getSchedulesOfOwner($this->userId);
                 if ($result===false){
@@ -190,17 +225,27 @@ class ScheduleManager{
                         $i=0;
                         while ($row = $result->fetch_array(MYSQLI_NUM))
                         {       
-                                 $this->schedules[$i]= new Schedule($row[1],$row[2],$row[3],$row[6]);
-                                 $this->schedules[$i]->id=$row[0];
-                                 $this->schedules[$i]->dataCreated=$row[4];
-                                 $this->schedules[$i]->dataUpdated=$row[5];
+                                 $this->schedules[$i]= new Schedule($row[1], $row[0],$row[2],$row[3],$row[4],$row[5],$row[6]);
                                  $i=$i+1;
                         }
                         return $this->schedules;
                 }
         }
         
-        public getScheduleIdsSubcribed(){
+        public function getScheduleOwned($scheduleId){
+                $eventsDb=new Events_DB;
+                $result=$eventsDb->getScheduleOfOwner($this->userId, $scheduleId);
+                if ($result===false){
+                        return false;
+                } else{
+                       
+                       $row = $result->fetch_array(MYSQLI_NUM);
+                       $schedule= new Schedule($row[1], $row[0],$row[2],$row[3],$row[4],$row[5],$row[6]);
+                       return $schedule;
+                }
+        }
+        
+        public function getScheduleIdsSubcribed(){
                 $eventsDb=new Events_DB;
                 $result=$eventsDb->getSchSubcriptionsByUid($this->userId);
                 if ($result===false){

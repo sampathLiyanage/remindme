@@ -5,7 +5,7 @@ protected $con;
 	
 	//constructor - creates mysql connection
 	public function __construct(){
-			$this->con= new mysqli("localhost","root","","remind_me");
+			$this->con= new mysqli("localhost","root","","eventshare");
 		
 		// Check connection
 		if (mysqli_connect_errno($this->con)){
@@ -23,19 +23,7 @@ protected $con;
 		}
 		return $stmt;
 	}
-
-	//execute an sql statement
-	public function executeStmt($stmt){
-		//execute query
-		$result=$stmt->execute();
-		var_dump($result);
-		//if the query changed the database
-		if ($result==1){
-			return true;
-		}else{
-			return false;
-		}
-	}
+	
 }
 
 ?>
