@@ -1,8 +1,46 @@
+
+<?php
+include_once "lib/auth.php";
+$loginFailedDialog=false;
+$submitReport=false;
+
+session_start();
+if(isset($_SESSION['user']) && isset($_SESSION['pw'])){
+        $auth=new UserAuthenticator();
+        if($auth->authWithPwHash($_SESSION['user'], $_SESSION['pw'])){
+                header( 'Location: home.php' ) ;
+        } 
+} 
+
+
+//if user submit login details
+else if(isset($_POST['username']) && isset($_POST['passwd']) && isset($_POST['submit']) && $_POST['submit']=="login"){
+        $auth=new UserAuthenticator();
+        if($auth->authWithPasswd($_POST['username'], $_POST['passwd'])){
+                $_SESSION['user']=$_POST['username'];
+                $_SESSION['pw']=md5($_POST['passwd']);
+                header( 'Location: home.php' ) ;
+        }
+        else{
+                $loginFailedDialog=true;
+        }
+}
+
+//if user submit signup details
+else if(isset($_POST['username']) && isset($_POST['passwd']) && isset($_POST['email']) && isset($_POST['submit']) && $_POST['submit']=="signup"){
+        $auth=new UserCreator();
+        $report=$auth->createUser($_POST['username'],$_POST['passwd'],$_POST['email']);
+        $submitReport=$report->report;
+}
+        
+
+?>
+
 <!doctype html>
 <html lang="us">
 <head>
 	<meta charset="utf-8">
-	<title>jQuery UI Example Page</title>
+	<title>EventShare-Login</title>
 	<link href="css/sunny/jquery-ui-1.10.3.custom.css" rel="stylesheet"/>
 	<script src="js/jquery-1.9.1.js"></script>
 	<script src="js/jquery-ui-1.10.3.custom.js"></script>
@@ -19,25 +57,46 @@ position:absolute;
 	
 </head>
 <body>
+<h1 align="center" style="color:#b0e0e6">EventShare</h1>
 <div id="centerdiv" >
 <div  style="float:left" id="login_div">
-<form action="login.php" autocomplete="on">
+<form action="login.php" autocomplete="on" method="post">
   <table>
-  <tr><td>E-mail: </td><td><input type="email" name="email"></td></tr>
+  <tr><td>User Name: </td><td><input type="text" name="username"></td></tr>
   <tr><td>Password: </td><td><input type="password" name="passwd"></td></tr>
-  <tr><td></td><td><input type="submit" value="login"></td><tr>
+  <tr><td></td><td><input type="submit" name="submit" value="login"></td><tr>
   </table>
 </form> </div>
 
 <div style="float:right" class="center" id="signup_div">
-<form action="signup.php" autocomplete="on">
+<form action="login.php" autocomplete="on" method="post">
   <table>
   <tr><td>User Name: </td><td><input type="text" name="username"></td></tr>
   <tr><td>E-mail: </td><td><input type="email" name="email"></td></tr>
   <tr><td>Password: </td><td><input type="password" name="passwd"></td></tr>
-  <tr><td></td><td><input type="submit" value="Sign-Up"></td></tr>
+  <tr><td></td><td><input type="submit" name="submit" value="signup"></td></tr>
   </table>
 </form> 
 </div></div>
+
+<?php
+if ($loginFailedDialog){
+      echo  "<script>$(function() {
+    $( '#dialog' ).dialog();
+  });</script>
+  <div class='ui-state-highlight' id='dialog' title='Login Failed!!!'>
+  <p>Please recheck your username and password</p>
+  </div>";
+}
+
+else if (!($submitReport===false)){
+       echo  "<script>$(function() {
+    $( '#dialog' ).dialog();
+  });</script>
+  <div id='dialog' title='signup notification'>
+  <p>".$submitReport."</p>
+  </div>"; 
+}
+?>
 </body>
 </html>

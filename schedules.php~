@@ -1,0 +1,86 @@
+<?php
+include_once "lib/auth.php";
+include_once "lib/events.php";
+//check authentication
+include_once "authenticate.php";
+
+/**
+*to be called if request has no action
+*/
+function error(){
+        echo "<h1>something went wrong!!!</h1>";
+        exit(0); 
+}
+
+
+function drawScheduleCreateForm($titleError=''){
+        $htmlCode= '
+                  <form id="schedule" action="schedules.php?action=saveSchedule&" autocomplete="on" >
+                  <table>
+                  <tr><td>Title: </td><td><input type="text" value='.$titleError.'name="title"></td></tr>
+                  <tr><td>Desctiption: </td><td><textarea name="description"></textarea></td></tr>
+                  <tr><td>Date Of Expire: </td><td><input type="text" id="datepicker" name="expireDate"></td></tr>
+                  <input type="hidden" name="action" value="saveSchedule">
+                  <tr><td></td><td><input type="submit" name="submit" value="next" onclick="';
+                  
+        $htmlCode.="loadXMLDoc('schedules.php?'+$('#schedule').serialize()); return false;";
+        $htmlCode.='"></td></tr>
+                        </table>
+                        </form>
+                        <script>
+                    $( "#datepicker" ).datepicker();
+                  </script>';
+        echo $htmlCode;
+}
+
+function saveSchedule(){
+        if (!(isset($_GET['title']) && isset($_GET['description']) && isset($_GET['expireDate']))){
+                error();
+        }
+        
+        $auth= new UserAuthenticator();
+        $userId= $auth->getUserId($_SESSION['user'],$_SESSION['pw']);
+        $sManager= new ScheduleManager($userId);
+        $schedule= new Schedule_temp($userId,$_GET['title'],$_GET['description'],$_GET['expireDate']);
+        $report=$sManager->createSchedule($schedule);
+        if ($report->isError){
+                drawScheduleCreateForm("<p style='color:#FF0000'>".$report->report."</p>");
+        } else{
+                echo  "<p>schedule added successfully. Add events to the schedule now</p>";
+        }
+}
+
+
+
+/**
+*calling functions according to the action of the request
+*/
+
+//if action is not set
+if (!(isset($_GET['action']))){
+        error(); 
+}
+
+$action=$_GET['action'];
+
+
+
+if ($action=='createSchedule'){
+        drawScheduleCreateForm();
+}
+
+else if ($action=='saveSchedule'){
+       saveSchedule();
+}
+
+
+
+
+
+
+
+?>
+
+
+
+

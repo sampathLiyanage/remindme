@@ -295,7 +295,7 @@ class TodoListTest  extends PHPUnit_Framework_TestCase{
                 
                 $event=new TodoList_event_temp(self::$userId, "mid evolution", "get ready for the evolution", "2013-09-20");
                 $result=$todoList->addEvent($event);
-                self::assertTrue(!$result->isError);
+                self::assertTrue($result);
                 
                 //read the event
                 $todoListManager=new TodoListManager(self::$userId);

@@ -113,11 +113,7 @@ class TodoList_temp{
         }      
 }
 
-class EventReport extends Report{
-           public     $name='';
-           public     $description='';
-           public      $date='';
-}
+
         
 class TodoList extends TodoList_temp{
         
@@ -125,6 +121,12 @@ class TodoList extends TodoList_temp{
 	public $dateCreated;
 	public $dateUpdated;
 	
+	class EventReport extends Report{
+           public     $name='';
+           public     $description='';
+           public      $date='';
+}
+
 	public function __construct($userId, $id, $title, $description, $dateCreated, $dateUpdated){
                 $this->id=$id;
                 $this->dateCreated=$dateCreated;

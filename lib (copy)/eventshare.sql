@@ -23,16 +23,17 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `todoList`
+-- Table structure for table `schedule`
 --
 
-CREATE TABLE IF NOT EXISTS `todoList` (
+CREATE TABLE IF NOT EXISTS `schedule` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `title` varchar(50) NOT NULL,
   `description` text NOT NULL,
   `date_created` datetime NOT NULL,
   `date_updated` datetime NOT NULL,
+  `date_expire` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
@@ -40,44 +41,44 @@ CREATE TABLE IF NOT EXISTS `todoList` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `todoList_event`
+-- Table structure for table `schedule_event`
 --
 
-CREATE TABLE IF NOT EXISTS `todoList_event` (
+CREATE TABLE IF NOT EXISTS `schedule_event` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `todoList_id` int(11) NOT NULL,
+  `schedule_id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
   `description` text NOT NULL,
   `date_time` datetime NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `todoList_id` (`todoList_id`)
+  KEY `schedule_id` (`schedule_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `todoList_subcription`
+-- Table structure for table `schedule_subcription`
 --
 
-CREATE TABLE IF NOT EXISTS `todoList_subcription` (
+CREATE TABLE IF NOT EXISTS `schedule_subcription` (
   `user_id` int(11) NOT NULL,
-  `todoList_id` int(11) NOT NULL,
-  PRIMARY KEY (`user_id`,`todoList_id`),
-  KEY `todoList_id` (`todoList_id`)
+  `shedule_id` int(11) NOT NULL,
+  PRIMARY KEY (`user_id`,`shedule_id`),
+  KEY `shedule_id` (`shedule_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `todo_event_reminder`
+-- Table structure for table `sch_event_reminder`
 --
 
-CREATE TABLE IF NOT EXISTS `todo_event_reminder` (
+CREATE TABLE IF NOT EXISTS `sch_event_reminder` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `todo_event_id` int(11) NOT NULL,
+  `sch_event_id` int(11) NOT NULL,
   `date_time` datetime NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `todo_event_id` (`todo_event_id`)
+  KEY `sch_event_id` (`sch_event_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
 
 -- --------------------------------------------------------
@@ -101,29 +102,29 @@ CREATE TABLE IF NOT EXISTS `user` (
 --
 
 --
--- Constraints for table `todoList`
+-- Constraints for table `schedule`
 --
-ALTER TABLE `todoList`
-  ADD CONSTRAINT `todoList_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `schedule`
+  ADD CONSTRAINT `schedule_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `todoList_event`
+-- Constraints for table `schedule_event`
 --
-ALTER TABLE `todoList_event`
-  ADD CONSTRAINT `todoList_event_ibfk_1` FOREIGN KEY (`todoList_id`) REFERENCES `todoList` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `schedule_event`
+  ADD CONSTRAINT `schedule_event_ibfk_1` FOREIGN KEY (`schedule_id`) REFERENCES `schedule` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `todoList_subcription`
+-- Constraints for table `schedule_subcription`
 --
-ALTER TABLE `todoList_subcription`
-  ADD CONSTRAINT `todoList_subcription_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `todoList_subcription_ibfk_2` FOREIGN KEY (`todoList_id`) REFERENCES `todoList` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `schedule_subcription`
+  ADD CONSTRAINT `schedule_subcription_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `schedule_subcription_ibfk_2` FOREIGN KEY (`shedule_id`) REFERENCES `schedule` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `todo_event_reminder`
+-- Constraints for table `sch_event_reminder`
 --
-ALTER TABLE `todo_event_reminder`
-  ADD CONSTRAINT `todo_event_reminder_ibfk_1` FOREIGN KEY (`todo_event_id`) REFERENCES `todoList_event` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `sch_event_reminder`
+  ADD CONSTRAINT `sch_event_reminder_ibfk_1` FOREIGN KEY (`sch_event_id`) REFERENCES `schedule_event` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

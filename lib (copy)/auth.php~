@@ -121,7 +121,7 @@ class UserAuthenticator{
 	
 	public function getUserId($username,$passwdHash){
 	        $result= $this->authDb->getUserId($username,$passwdHash);
-	        $row = $result->fetch_array(MYSQLI_NUM);
+	        $row = $result->fetch_row();
 		return $row[0];
 	}
 }

@@ -90,7 +90,8 @@ class Auth_DB extends DB_connection{
 		$stmt->bind_param('ss', $username,$passwdHash);
 		$stmt->execute();
 		$result=$stmt->get_result();
-		return $result;
+		$row = $result->fetch_row();
+		return $row[0];
 	}
 	
 	/*
