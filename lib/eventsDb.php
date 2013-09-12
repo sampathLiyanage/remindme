@@ -1,5 +1,10 @@
 
 <?php
+/***
+* developer: sampath liyanage
+* phone no: +94778514847
+*/
+
 include_once "dbCon.php";
 
 class Events_DB extends DB_connection{
@@ -8,8 +13,25 @@ class Events_DB extends DB_connection{
                 parent::__construct();
         }
         
+        /*################## common funcitons #########################*/
+        
+        public function getSqlResults($stmt){
+        	if (!$stmt->execute()){
+        		return false;
+        	}
+        
+        	$results=$stmt->get_result();
+        
+        	if ($results->num_rows==0){
+        		return false;
+        	}
+        	return $results;
+        }
+         
+        
         /*################# functions for "todoList" table #################*/
 	
+     
 	/*
 	*for creating todoLists
 	*@input=> user id:int, title:string
@@ -32,8 +54,7 @@ class Events_DB extends DB_connection{
 	public function getLatestTodoList($userId){
 	        $stmt = $this->prepareSqlStmt( "SELECT * FROM todoList WHERE user_id=? ORDER BY id DESC");
 		$stmt->bind_param('s', $userId);
-		$stmt->execute();
-		return $stmt->get_result();
+	    return $this->getSqlResults($stmt);
 	}
 	
 	
@@ -58,10 +79,9 @@ class Events_DB extends DB_connection{
 	*/
 	public function getTodoListsOfOwner($userId){
 		
-		$stmt = $this->prepareSqlStmt( "SELECT * FROM todoList WHERE user_id=?");
+		$stmt = $this->prepareSqlStmt( "SELECT * FROM todoList WHERE user_id=? ORDER BY id DESC");
 		$stmt->bind_param('s', $userId);
-		$stmt->execute();
-		return $stmt->get_result();
+		return $this->getSqlResults($stmt);
 	}
 	
 	
@@ -75,8 +95,21 @@ class Events_DB extends DB_connection{
 		
 		$stmt = $this->prepareSqlStmt( "SELECT * FROM todoList WHERE user_id=? AND id=?");
 		$stmt->bind_param('ss', $userId, $todoListId);
-		$stmt->execute();
-		return $stmt->get_result();
+		return $this->getSqlResults($stmt);
+	}
+	
+	
+	/*
+	 *confirm ownership of a todo list
+	
+	*@input=> user id:int, todoList id:int
+	*@output=> whether the user is the owner or not:boot
+	*/
+	public function confirmTodolistOwnership($userId, $todoListId){
+	
+		$stmt = $this->prepareSqlStmt( "SELECT * FROM todoList WHERE user_id=? AND id=?");
+		$stmt->bind_param('ss', $userId, $todoListId);
+		return $stmt->execute();
 	}
 	
 	
@@ -144,8 +177,7 @@ class Events_DB extends DB_connection{
 	
 		$stmt = $this->prepareSqlStmt( "SELECT * FROM todoList_subcription WHERE user_id=?");
 		$stmt->bind_param('s', $userId);
-		$stmt->execute();
-		return $stmt->get_result();
+		return $this->getSqlResults($stmt);
 	}
 	
 	/*
@@ -157,8 +189,7 @@ class Events_DB extends DB_connection{
 	
 		$stmt = $this->prepareSqlStmt( "SELECT * FROM todoList_subcription WHERE todoList_id=?");
 		$stmt->bind_param('s', $todoListId);
-		$stmt->execute();
-		return $stmt->get_result();
+		return $this->getSqlResults($stmt);
 	}
 	
 	
@@ -201,12 +232,24 @@ class Events_DB extends DB_connection{
 	*/
 	public function getTodoEvents($todoListId){
 	
-		$stmt = $this->prepareSqlStmt( "SELECT * FROM todoList_event WHERE todoList_id=?");
+		$stmt = $this->prepareSqlStmt( "SELECT * FROM todoList_event WHERE todoList_id=? ORDER BY date_time ASC");
 		$stmt->bind_param('s', $todoListId);
-		$stmt->execute();
-		return $stmt->get_result();
+		return $this->getSqlResults($stmt);
 	}
 	
+	
+	/*
+	 *confirm ownership of a todo list
+	
+	*@input=> user id:int, todoList id:int
+	*@output=> whether the user is the owner or not:boot
+	*/
+	public function confirmTdEventOwnership($todoListId, $eventId){
+	
+		$stmt = $this->prepareSqlStmt( "SELECT * FROM todoList_event WHERE id=? AND todoList_id=?");
+		$stmt->bind_param('ss', $eventId, $todoListId);
+		return $stmt->execute();
+	}
 	
 	/*
 	*for deleting an event
@@ -245,8 +288,7 @@ class Events_DB extends DB_connection{
 	
 		$stmt = $this->prepareSqlStmt( "SELECT * FROM todo_event_reminder WHERE todo_event_id=?");
 		$stmt->bind_param('s', $eventId);
-		$stmt->execute();
-		return $stmt->get_result();
+		return $this->getSqlResults($stmt);
 	}
 	
 	/*
@@ -272,8 +314,7 @@ class Events_DB extends DB_connection{
 	                                        AND todo_event_reminder.todo_event_id=todoList_event.id
 	                                        AND todoList_event.todoList_id=todoList.id");
 	        $stmt->bind_param('s', $reminderId);
-		$stmt->execute();
-		return $stmt->get_result();
+		return $this->getSqlResults($stmt);
 	}
 }
 ?>

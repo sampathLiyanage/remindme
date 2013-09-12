@@ -1,4 +1,8 @@
 <?php
+/***
+* developer: sampath liyanage
+* phone no: +94778514847
+*/
 
 include_once "authDb.php";
 include_once "eventsDb.php";
@@ -273,7 +277,7 @@ class TodoListTest  extends PHPUnit_Framework_TestCase{
                 $todoListManager=new TodoListManager(self::$userId);
                 $todoList=new TodoList_temp(self::$userId, 'testing todoList 1', 'this todoList is created for testing');
                 $result=$todoListManager->createTodoList($todoList);
-                $this->assertTrue(!($result->isError));
+                $this->assertTrue($result);
                 //get created todo list
                 $todoList=$todoListManager->getLatestTodoList();
                 $this->assertTrue($todoList->userId==self::$userId);
@@ -333,11 +337,9 @@ class TodoListTest  extends PHPUnit_Framework_TestCase{
                 $todoList->title="testing todoList 1 changed";
                 $todoList->description="description changed";
                 $todoList->dateExpire='2013-09-27 00:00:00';
-                var_dump($todoList->dateExpire);
                 $todoListManager->changeTodoList($todoList);
                 $todoLists=$todoListManager->getTodoListsOwned();
                 $todoList=$todoLists[0];
-                var_dump($todoList);
                 $this->assertTrue(!($todoList===false));
                 $this->assertTrue($todoList->id!=null);
                 $todoListId=$todoList->id; //id should be saved for get the events of that todoList next

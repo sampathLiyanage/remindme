@@ -1,11 +1,23 @@
 <?php
+/***
+* developer: sampath liyanage
+* phone no: +94778514847
+*/
 
+
+/**
+*all the classes those access the database
+*should inherit from this class.
+*
+*@@todo: change the construction to connet to the database
+*with different host, username and password to control access
+*/ 
 class DB_connection{
 protected $con;
 	
 	//constructor - creates mysql connection
 	public function __construct(){
-			$this->con= new mysqli("localhost","root","","eventshare");
+			$this->con= new mysqli("localhost","root","","eventsharetest");
 		
 		// Check connection
 		if (mysqli_connect_errno($this->con)){
@@ -14,7 +26,12 @@ protected $con;
 		}
 	}
 	
-	//exit if prepare statement has failed
+	/*
+	*exit if prepare statement has failed
+	*@input=> statement to prepare:sqli statement
+	*@output=> prepaired statement:sqli prepaird statement
+	*exits if prepair fails
+	*/
 	public function prepareSqlStmt($stmtToPrepare){
 	        $stmt=$this->con->prepare($stmtToPrepare);
 		if (!$stmt){

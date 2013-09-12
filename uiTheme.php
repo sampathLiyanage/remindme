@@ -1,0 +1,134 @@
+<?php
+/***
+* developer: sampath liyanage
+* phone no: +94778514847
+*/
+
+/**
+*represent the basic structure of a theme
+*/
+
+abstract class Theme{
+	protected $html;
+	
+	function __construct(){
+		$this->html=$this->getHeader();
+	}
+	
+	/*
+	* get html at the top of the page
+	* this html code should be used in many pages
+	* @output=>html:string
+	*/
+	abstract protected function getHeader();
+	
+	/*
+	* get html at the bottom of the page
+	* this html code should be used in many pages
+	* @output=>html:string
+	*/
+	abstract protected function getFooter();
+	
+	/*
+	*add html to the middle of the page
+	*input:$html:string
+	*/
+	public function addHtml($html){
+		$this->html.=$html;
+	}
+	
+	/*
+	*get html of the page
+	*@output:string
+	*/
+	public function getHtml(){
+		$this->html.=$this->getFooter();
+		return $this->html;
+	}
+}
+
+
+/**
+ * theme created with JQuery
+ */
+class JQTheme extends Theme{
+	
+	function __construct(){
+		parent::__construct();
+	}
+	
+	
+	public function addEventsTabHtml($html){
+		$this->html.='<div id="events" style="height:500px">'.$html.'</div>';
+	}
+	
+	public function addSubscriptionsTabHtml($html){
+		$this->html.='<div id="subcriptions" style="height:500px">'.$html.'</div>';
+	}
+	
+	public function addProfileTabHtml($html){
+		$this->html.='<div id="profile" style="height:500px">'.$html.'</div>';
+	}
+	
+	protected function getHeader(){
+		return '<!doctype html>
+				<html lang="us">
+				<head>
+					<meta charset="utf-8">
+					<title>EventShare</title>
+					<link href="css/sunny/jquery-ui-1.10.3.custom.css" rel="stylesheet"/>
+					<script src="js/jquery-1.9.1.js"></script>
+					<script src="js/jquery-ui-1.10.3.custom.js"></script>
+				    <script src="js/form.js"></script>
+				    <script src="js/pureAjax.js"></script>
+				    <script>function showUrlInDialog(url){
+						  var tag = $("<div id=\'dialog\' title=\'New Todo List\' style=\'width:100%\'></div>");
+						  $.ajax({
+						    url: url,
+						    success: function(data) {
+						      tag.html(data).dialog({modal: true,width: 400,height:400}).dialog(\'open\');
+						      $( "#datepicker" ).datepicker({ dateFormat: "dd-mm-yy" });
+						    }
+						  });
+						}</script>
+					<script>
+          $(function() {
+            $( "#tabs" ).tabs();
+            
+            $( "input[type=submit], a, button" )
+              .button()
+              .click(function( event ) {
+                event.preventDefault();
+            });
+            
+            $( "#menu" ).menu();
+            $( "#datepicker" ).datepicker();
+            $( "#accordion" ).accordion();
+          });
+          </script>
+		</head>
+		<body>
+		<div id="tabs">
+		  <ul>
+		    <li><a href="#events">My Events</a></li>
+		    <li><a href="#subcriptions">Subcriptions</a></li>
+		    <li><a href="#profile">Profile</a></li>
+		    <div style="float:right">
+		        user: '.$_SESSION["user"].' '.'<input type="submit" value="logout" onclick="location.href=\'logout.php\';">
+		    </div>
+		  </ul>';
+	}
+	
+	
+	protected function getFooter(){
+		return ' 
+			</div>
+			</body>
+			</html>';
+	}
+	
+}
+
+
+
+?>

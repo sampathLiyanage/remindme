@@ -1,7 +1,7 @@
 <phpunit>
   <testsuites>
     <testsuite name="Tests">
-      <directory suffix="Test.php">userAuthManager</directory>
+      <directory suffix="Test.php">lib</directory>
     </testsuite>
   </testsuites>
 </phpunit>

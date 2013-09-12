@@ -1,11 +1,16 @@
 <?php
-
-/**
-*this script should be included in all the php scripts
-*this checks if the user is loged in
-*user "include_once"
+/***
+* developer: sampath liyanage
+* phone no: +94778514847
 */
 
+/**
+*this script should be included in all the php scripts which can be accesed by outside users
+*this checks if the user is loged in and redirects if not
+*use "include_once"
+*/
+
+include_once "lib/auth.php";
 
 //check authentication
 

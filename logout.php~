@@ -1,6 +1,15 @@
 <?php
+/***
+* developer: sampath liyanage
+* phone no: +94778514847
+*/
+
+/***
+*logout page
+*/
+
 session_start();
 unset($_SESSION["user"]); 
 unset($_SESSION["pw"]);
-header("Location: home.php");
+header("Location: login.php");
 ?>

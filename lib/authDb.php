@@ -1,7 +1,17 @@
 
 <?php
+
+/***
+* developer: sampath liyanage
+* phone no: +94778514847
+*/
+
 include_once "dbCon.php";
 
+/**
+*contains functions needed to interact with database
+*for authentication component
+*/
 class Auth_DB extends DB_connection{
 	
 	public function __construct(){

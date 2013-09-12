@@ -8,10 +8,6 @@
 include_once "authDb.php";
 include_once "auth.php";
 
-/***
-*contains test cases to test functions in Auth_DB class
-*in authDb.php
-*/
 class Auth_DBTest  extends PHPUnit_Framework_TestCase{
         static $authDb;
         
@@ -24,7 +20,7 @@ class Auth_DBTest  extends PHPUnit_Framework_TestCase{
         
         function testCreateUser(){
 		
-		//user exist
+		/////////user exist
 	        $result= self::$authDb->isUserExist('sampath');
 		
 		//adding a new user

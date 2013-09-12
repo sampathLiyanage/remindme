@@ -1,10 +1,15 @@
-
 <?php
+/***
+* developer: sampath liyanage
+* phone no: +94778514847
+*/
+
+
 include_once "eventsDb.php";
 
 
 /**
-*represent the report of a function call
+*represent the error report of a function call
 */
 class Report{
         public $isError=true;
@@ -14,13 +19,11 @@ class Report{
 
 
 /**
-*represents a reminder
+*represents a reminder before saving in the database
 */	
-
 class TodoList_reminder_temp{
 	private $eventId;
 	public $dateTime;
-	
 	
 	public function __construct($eventId, $dateTime){
 	        $this->eventId=$eventId;
@@ -28,6 +31,9 @@ class TodoList_reminder_temp{
         }	
 }
 
+/**
+*represents a reminder after saving in the database
+*/
 class TodoList_reminder extends TodoList_reminder_temp{
         public $id;
 	
@@ -40,7 +46,7 @@ class TodoList_reminder extends TodoList_reminder_temp{
 
 
 /**
-*represents an event
+*represents an event before saving in the database
 */	
 class TodoList_event_temp{
 
@@ -57,7 +63,9 @@ class TodoList_event_temp{
         }
 }
 
-
+/**
+*represents an event after saving in the database
+*/
 class TodoList_event extends TodoList_event_temp{
 
        
@@ -67,6 +75,11 @@ class TodoList_event extends TodoList_event_temp{
                 parent::__construct($todoListId, $name, $description, $dateTime);
         }
         
+        /*
+        *get reminder of an event
+        *@input=>event id:int
+        *@output=> reminder:TodoList_Reminder OR false if no results:bool
+        */
         public function getReminders($eventId){
                 $eventsDb=new Events_DB;
                 $result=$eventsDb->getTodoReminders($eventId);
@@ -83,12 +96,22 @@ class TodoList_event extends TodoList_event_temp{
                 }
         }
         
+        /*
+        *add reminder of an event
+        *@input=>reminder:TodoList_Reminder_Temp
+        *@output=>if the reminder added successfully:bool
+        */
         public function addReminder($reminder){
                 $eventsDb=new Events_DB;
                 $result=$eventsDb->addTodoReminder($this->id, $reminder->dateTime);
                 return $result;
         }
         
+        /*
+        *remove reminder of an event
+        *@input=>reminder id:int
+        *@output=>if the reminder removed successfully:bool
+        */
         public function removeReminder($id){
                 $eventsDb=new Events_DB;
                 $result=$eventsDb->deleteTodoReminder($id);
@@ -99,7 +122,7 @@ class TodoList_event extends TodoList_event_temp{
 
 
 /**
-*represent a todoList
+*represent a todoList before saving in the database
 */
 class TodoList_temp{
 	public $userId;
@@ -113,12 +136,18 @@ class TodoList_temp{
         }      
 }
 
+/**
+*represents error report of an event
+*/
 class EventReport extends Report{
            public     $name='';
            public     $description='';
            public      $date='';
 }
-        
+
+/**
+*represent a todoList before after in the database
+*/        
 class TodoList extends TodoList_temp{
         
 	public $id;
@@ -133,6 +162,10 @@ class TodoList extends TodoList_temp{
                 parent::__construct($userId, $title, $description);
         }
         
+        /*
+        *get all the events in a todo list
+        *@output=>array of all the events:TodoList_Event array OR false if fails:bool 
+        */
         public function getEvents(){
                 $eventsDb=new Events_DB;
                 $result=$eventsDb->getTodoEvents($this->id);
@@ -150,6 +183,11 @@ class TodoList extends TodoList_temp{
                 }
         }
         
+        /*
+        *add event to a todo list
+        *@input=>event:TodoList_event_temp
+        *@output=>if the event added successfully:bool
+        */
         public function addEvent($event){
                 
                 $report=new EventReport;
@@ -174,18 +212,33 @@ class TodoList extends TodoList_temp{
                 return $report;
         }
         
-        public function removeEvent($id){
+        /*
+        *remove event from a todo list
+        *@input=>event id:int
+        *@output=>if the event removed successfully:bool
+        */
+        public function removeEvent($eventId){
                 $eventsDb=new Events_DB;
-                $result=$eventsDb->deleteTodoEvent($id);
-                return $result;
+                $result=$eventsDb->confirmTdEventOwnership($this->id, $eventId);
+                if ($result){
+                	return $eventsDb->deleteTodoEvent($eventId);
+                }
+                return false;
+        
         }
         
+        /*
+        *change event of a todo list
+        *@input=>event:TodoList_event_temp
+        *@output=>if the event change successfully:bool
+        */
         public function changeEvent($event){
                 $eventsDb=new Events_DB;
                 $result=$eventsDb->changeTodoEvent($event->id, $event->name, $event->description, $event->dateTime);
                 return $result;
         }
         
+        //************to be shifted to another component****************//
         public function subcribe($userId){
                 $eventsDb=new Events_DB;
                 $result=$eventsDb->subcribeTodoList($this->id, $userId);
@@ -231,35 +284,48 @@ class TodoListManager{
                 $this->userId=$userId;
         }
         
+        /*
+        *create a todo list
+        *@input=>todo list: TodoList_Temp
+        *@output=>if todo list added successfully:bool
+        */
         public function createTodoList($todoList){
                 $report=new Report;
                 
-                //check errors in "title" field
-                if(trim($todoList->title)==''){
-                        $report->report="title should not be empty";
-                        return $report; 
-                }
-                
                 $eventsDb=new Events_DB;
                 $result=$eventsDb->createTodoList($this->userId, $todoList->title, $todoList->description);
-                if ($result){
-                        $report->isError=false;
-                }
-                return $report;
+                return $result;
         }
         
+        /*
+        *change a todo list
+        *@input=>todo list: TodoList_Temp
+        *@output=>if todo list changed successfully:bool
+        */
         public function changeTodoList($todoList){
                 $eventsDb=new Events_DB;
                 $result=$eventsDb->changeTodoList($todoList->id, $todoList->title, $todoList->description);
                 return $result;
         }
         
+        /*
+        *change a todo list
+        *@input=>todo list id: int
+        *@output=>if todo list deleted successfully:bool
+        */
         public function deleteTodoList($todoListId){
                 $eventsDb=new Events_DB;
-                $result=$eventsDb->deleteTodoList($todoListId);
-                return $result;
+                $result=$eventsDb->confirmTodolistOwnership($this->userId, $todoListId);
+                if ($result){
+                	return $eventsDb->deleteTodoList($todoListId);
+                }
+                return false;
         }
         
+        /*
+        *get the todo list added last
+        *@output=>todo list:TodoList OR false if fails:bool
+        */
         public function getLatestTodoList(){
                 $eventsDb=new Events_DB;
                 $result=$eventsDb->getLatestTodoList($this->userId);
@@ -268,8 +334,12 @@ class TodoListManager{
                 return $this->todoLists;
         }
         
-        
-         public function getTodoListsOwned(){
+        /*
+        *get all the todo list of a user
+        *@output=>array of todo lists:TodoList array 
+        *@output=>false if fails:bool
+        */
+        public function getTodoListsOwned(){
                 $eventsDb=new Events_DB;
                 $result=$eventsDb->getTodoListsOfOwner($this->userId);
                 if ($result===false){
@@ -285,6 +355,11 @@ class TodoListManager{
                 }
         }
         
+        /*
+        *get a todo list of a user by id
+        *@output=>todo lists:TodoList 
+        *@output=>false if fails:bool
+        */
         public function getTodoListOwned($todoListId){
                 $eventsDb=new Events_DB;
                 $result=$eventsDb->getTodoListOfOwner($this->userId, $todoListId);
@@ -295,9 +370,11 @@ class TodoListManager{
                        $row = $result->fetch_array(MYSQLI_NUM);
                        $todoList= new TodoList($row[1], $row[0],$row[2],$row[3],$row[4],$row[5]);
                        return $todoList;
+                       
                 }
         }
         
+        /************ tobe shisted to another component*************/
         public function getTodoListIdsSubcribed(){
                 $eventsDb=new Events_DB;
                 $result=$eventsDb->getTodoSubcriptionsByUid($this->userId);
