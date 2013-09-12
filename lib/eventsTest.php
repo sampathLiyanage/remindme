@@ -83,42 +83,7 @@ class Events_DBTest  extends PHPUnit_Framework_TestCase{
 	
 	
 	
-	/*
-	*for testing 3 functions
-	*tests subcribeTodoList();
-	*tests unSubcribeTodoList();
-	*tests getTodoSubcriptions();
-	*/
-        public function testTodoSubcriptions(){
-                $result= self::$eventsDb->getTodoListsOfOwner(self::$userId);
-		while ($row = $result->fetch_array(MYSQLI_NUM))
-                {       
-                         $id=$row[0];
-                         
-                         //subcribe todoList;
-		        $r= self::$eventsDb->subcribeTodoList(self::$userId, $id);
-		        $this->assertTrue($r);
-		        
-		        //get subciptions by userId
-		        $r= self::$eventsDb->getTodoSubcriptionsByUid(self::$userId);
-		        while ($row1 = $r->fetch_array(MYSQLI_NUM)){
-		                $shdId=$row1[1];
-		                $this->assertTrue($shdId==$id);
-		                
-		                ////get subciptions by todoListId
-		                $r1= self::$eventsDb->getTodoSubcriptionsBySid($shdId);
-		                while ($row2 = $r1->fetch_array(MYSQLI_NUM)){
-		                        $userId=$row2[0];
-		                        $this->assertTrue(self::$userId==$userId);
-		                }
-		        }
-		       
-		        //unsubcribe todoelule
-		        $r= self::$eventsDb->unSubcribeTodoList(self::$userId, $id);
-		        $this->assertTrue($r);
-		        
-	        }
-        }
+	
         
         public function testcreateTodoEvent(){
                 $result= self::$eventsDb->getTodoListsOfOwner(self::$userId);
