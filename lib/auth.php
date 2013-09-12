@@ -60,7 +60,6 @@ class UserCreator{
 		
 		//if signup data are validated
 		elseif (!($this->report->isError)){
-			echo "testing";
 			$result=$authDb->createUser($username,$passwd,$email);
 			if (!$result){
 				$this->report->isError=true;
