@@ -39,7 +39,7 @@ class Events_DB extends DB_connection{
 	*@output=> a todoList: sql result set
 	*/
 	public function getLatestTodoList($userId){
-	        $stmt = $this->prepareSqlStmt( "SELECT * FROM todoList WHERE user_id=? ORDER BY id DESC");
+	    $stmt = $this->prepareSqlStmt( "SELECT * FROM todoList WHERE user_id=? ORDER BY id DESC");
 		$stmt->bind_param('s', $userId);
 	    return $this->getSqlResults($stmt);
 	}

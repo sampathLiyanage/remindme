@@ -6,6 +6,9 @@
 
 include_once "dbCon.php";
 
+/**
+ * database functions for subcription manager
+ */
 class Subscription_DB extends DB_connection{
 	public function __construct(){
 		parent::__construct();
