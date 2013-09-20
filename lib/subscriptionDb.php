@@ -20,13 +20,34 @@ class Subscription_DB extends DB_connection{
 	*@output=> if query changed the database:bool
 	*/
 	public function subcribeTodoList($userId, $todoListId){
-	
+                
 		$stmt = $this->prepareSqlStmt( "INSERT INTO todoList_subcription values (?,?)");
 		$stmt->bind_param('ss', $userId, $todoListId);
 		return $stmt->execute();
 	}
 	
-	
+        /*
+	*for getting public key of a todo list
+	*@input=> public key of todo list: string
+	*@output=> todo list id: int
+	*/
+        public function getTdIdFromKey($publicKey){
+            $stmt = $this->prepareSqlStmt( "SELECT id FROM todoList WHERE public_token=?");
+            $stmt->bind_param('s', $publicKey);
+            return $this->getSqlResults($stmt);
+        }
+        
+        /*
+	*for getting todo list id of a public key
+	*@input=> todo list id: int
+	*@output=> public key of todo list: string
+	*/
+        public function getTdKeyFromId($id){
+            $stmt = $this->prepareSqlStmt( "SELECT public_token FROM todoList WHERE id=?");
+            $stmt->bind_param('s', $id);
+            return $this->getSqlResults($stmt);
+        }
+        
 	/*
 	*for unsubcribing a todoList
 	*@input=> user id:int, todoList_id:int

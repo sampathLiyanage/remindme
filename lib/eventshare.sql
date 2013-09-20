@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Sep 02, 2013 at 08:33 AM
+-- Generation Time: Sep 20, 2013 at 09:52 PM
 -- Server version: 5.5.27
 -- PHP Version: 5.4.7
 
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `eventshare`
+-- Database: `eventsharetest`
 --
 
 -- --------------------------------------------------------
@@ -33,9 +33,17 @@ CREATE TABLE IF NOT EXISTS `todoList` (
   `description` text NOT NULL,
   `date_created` datetime NOT NULL,
   `date_updated` datetime NOT NULL,
+  `public_token` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=140 ;
+
+--
+-- Dumping data for table `todoList`
+--
+
+INSERT INTO `todoList` (`id`, `user_id`, `title`, `description`, `date_created`, `date_updated`, `public_token`) VALUES
+(139, 244, '&lt;script&gt;alert();&lt;/script&gt;', 'dfdfdf', '2013-09-21 01:20:28', '2013-09-21 01:21:27', NULL);
 
 -- --------------------------------------------------------
 
@@ -51,7 +59,15 @@ CREATE TABLE IF NOT EXISTS `todoList_event` (
   `date_time` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `todoList_id` (`todoList_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=269 ;
+
+--
+-- Dumping data for table `todoList_event`
+--
+
+INSERT INTO `todoList_event` (`id`, `todoList_id`, `name`, `description`, `date_time`) VALUES
+(267, 139, 'ddddd', 'ddd', '2013-09-17 00:00:00'),
+(268, 139, 'dddddddd', 'dd', '2013-09-18 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -78,7 +94,7 @@ CREATE TABLE IF NOT EXISTS `todo_event_reminder` (
   `date_time` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `todo_event_id` (`todo_event_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=121 ;
 
 -- --------------------------------------------------------
 
@@ -94,7 +110,14 @@ CREATE TABLE IF NOT EXISTS `user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `user_name` (`user_name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=245 ;
+
+--
+-- Dumping data for table `user`
+--
+
+INSERT INTO `user` (`id`, `user_name`, `password`, `email`) VALUES
+(244, 'sam', '9f6e6800cfae7749eb6c486619254b9c', 's@s.com');
 
 --
 -- Constraints for dumped tables

@@ -111,7 +111,31 @@ class Events_DB extends DB_connection{
 		$stmt->bind_param('s', $todoListId);
 		return $stmt->execute();
 	}
+        
+        
+        /*
+	*for publishing a todo list
+	*@input=> userId:int, todoList id:int, key:string
+	*@output=> if query changed the database:bool
+	*/
+	public function publishTodoList($userId, $todoListId, $str){
+                
+		$stmt = $this->prepareSqlStmt( "UPDATE todoList SET public_token=? WHERE id=? AND user_id=?");
+		$stmt->bind_param('sss', $str,$todoListId, $userId);
+		return $stmt->execute();
+	}
 	
+        
+        /*
+	*to check a todo list key exists
+	*@input=> key:string
+	*@output=> if exists:bool
+	*/
+        public function isTodolistKey($str){
+                $stmt = $this->prepareSqlStmt( "SELECT *  FROM todoList WHERE public_token=? ");
+                $stmt->bind_param('s', $str);
+                return $this->getSqlResults($stmt);
+        }
 	
 	/*
 	*deleting all the todoLists

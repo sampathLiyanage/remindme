@@ -243,11 +243,22 @@ class TodoListTest  extends PHPUnit_Framework_TestCase{
                 $todoList=new TodoList_temp(self::$userId, 'testing todoList 1', 'this todoList is created for testing');
                 $result=$todoListManager->createTodoList($todoList);
                 $this->assertTrue($result);
+                
                 //get created todo list
                 $todoList=$todoListManager->getLatestTodoList();
+                
+                //publish the todo list
+                $todoListManager->publishTodoList($todoList->id);
+                $todoList=$todoListManager->getTodoListOwned($todoList->id);
+                
+                $this->assertTrue($todoList->publicKey!=NULL);
+                $this->assertTrue($todoList->userId==self::$userId);
                 $this->assertTrue($todoList->userId==self::$userId);
 		$this->assertTrue($todoList->title=='testing todoList 1');
 		$this->assertTrue($todoList->description=='this todoList is created for testing');
+                
+                
+                
                 
                 //add an event to a todoList
                 $todoListManager=new TodoListManager(self::$userId);

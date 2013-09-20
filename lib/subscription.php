@@ -23,7 +23,13 @@ class TdListSubscribeHandler{
 	 * @input=>todo list id:int
 	 * @output=>if successfull or not:bool
 	 */
-	public function subscribe($todoListId){
+	public function subscribe($publicKey){
+                $result=$this->scrDb->getTdIdFromKey($publicKey);
+                if ($result===false){
+                    return false;
+                }
+                $row=$result->fetch_array(MYSQLI_NUM);
+                $todoListId=$row[0];
 		$result=$this->scrDb->subcribeTodoList($this->userId, $todoListId);
 		return $result;
 	}

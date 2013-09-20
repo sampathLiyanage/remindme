@@ -41,10 +41,10 @@ abstract class Form{
 */
 class TodoListForm extends Form{
 	
-	private $titleError='';
-	private $title='';
-	private $description='';
-	private $todoListId='';
+	protected $titleError='';
+	protected $title='';
+	protected $description='';
+	protected $todoListId='';
 	
 	public function getHtml(){
 		$html= '<h3>Todo List details</h3>
@@ -77,16 +77,16 @@ class TodoListForm extends Form{
 			return false;
 		} 
 		$auth= new UserAuthenticator();
-        $userId= $auth->getUserId($_SESSION['user'],$_SESSION['pw']);
-        $tdManager= new TodoListManager($userId);
-        $todoList= new TodoList_temp($userId,$this->title,$this->description);
-        $result=$tdManager->createTodoList($todoList);
-        
-        if (!$result){
-        	header( 'Location: 404.html' ) ;
-        }
-        
-        return $result;
+                $userId= $auth->getUserId($_SESSION['user'],$_SESSION['pw']);
+                $tdManager= new TodoListManager($userId);
+                $todoList= new TodoList_temp($userId,$this->title,$this->description);
+                $result=$tdManager->createTodoList($todoList);
+
+                if (!$result){
+                        header( 'Location: 404.html' ) ;
+                }
+
+                return $result;
 	}
 	
 	protected function validateInputs($array){
@@ -94,9 +94,9 @@ class TodoListForm extends Form{
 			$element=htmlspecialchars($element, ENT_QUOTES, 'UTF-8');
    			 if ($key == 'title') {
         		$this->title=$element;
-    		} else if($key == 'description'){
-    			$this->description=$element;
-    		}
+                        } else if($key == 'description'){
+                                $this->description=$element;
+                        }
 		}
 		
 		$this->validateTitle();
@@ -117,13 +117,13 @@ class TodoListForm extends Form{
 *represents the form required to create an event for a todo list
 */
 class TodoEventForm extends Form{
-	private $name='';
-	private $description='';
-	private $date='';
-	private $todoListId='';
+	protected $name='';
+	protected $description='';
+	protected $date='';
+	protected $todoListId='';
 	
-	private $nameError='';
-	private $dateError='';
+	protected $nameError='';
+	protected $dateError='';
 	
 	public function getHtml(){
 		$html= '<h3>Event details</h3>
@@ -245,5 +245,75 @@ class TodoEventForm extends Form{
 	}
 }
 
+class TodoListEditForm extends TodoListForm{
+    private $html;
+    private $submit;
+    public function __construct($todoListId) {
+        $this->submit=false;
+        $auth= new UserAuthenticator();
+        $userId= $auth->getUserId($_SESSION['user'],$_SESSION['pw']);
+        $tdManager= new TodoListManager($userId);
+        $todoList=$tdManager->getTodoListOwned($todoListId);
+	$this->title=$todoList->title;
+	$this->description=$todoList->description;
+	$this->todoListId=$todoList->id;
+        $this->setHtml();
+    }
+    
+    public function submit($array){
+                $this->submit=true;
+		$this->validateInputs($array);
+                if ($this->error){
+                    return false;
+                }
+		$auth= new UserAuthenticator();
+                $userId= $auth->getUserId($_SESSION['user'],$_SESSION['pw']);
+                $tdManager= new TodoListManager($userId);
+                $todoList= $tdManager->getTodoListOwned($this->todoListId);
+                $todoList->title=$this->title;
+                $todoList->description=$this->description;
+                $result=$tdManager->changeTodoList($todoList);
 
+                if (!$result){
+                        header( 'Location: 404.html' ) ;
+                }
+
+                return $result;
+	}
+        
+        private function setHtml(){
+		$this->html= '<h3>Todo List details</h3>
+		<form id="todoList" action="todoLists.php?action=saveTodoList&" autocomplete="on" >
+		<table>
+		<tr><td>Title: </td><td><input type="text" name="title" value="'.$this->title.'"><br><font color="#FF0000">'.$this->titleError.'</font></td></tr>
+		<tr><td>Desctiption: </td><td><textarea name="description" >'.$this->description.'</textarea></td></tr>
+		<input type="hidden" name="action" value="editTodoList">
+		<input type="hidden" name="todoListId" value="'.$this->todoListId.'">
+		<tr><td></td><td><input type="submit" name="submit" value="save" onclick="';
+		
+		$this->html.="$.ajax({
+		url: 'todoLists.php?'+$('#todoList').serialize()+'&action=editTodoList',
+		success: function(data) {
+		$('#dialog').html(data);
+		$( '#datepicker' ).datepicker({ dateFormat: 'yy-mm-dd' });
+		}
+		}); return false;";
+		
+		$this->html.='"></td></tr>
+		</table>
+		</form>';
+		
+	}
+        
+        public function getHtml() {
+            if (!$this->error && $this->submit){
+                $this->html='<h3>Todo List Saved</h3>';
+            } else {
+                $this->setHtml();
+            }
+            
+            
+            return $this->html;
+        }
+}
 ?>

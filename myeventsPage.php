@@ -29,9 +29,16 @@ function getMyeventsPageHtml(){
 	//if user needs to create a new todo list
 	if (isset($_GET['act']) && $_GET['act']=="createTodoListForm"){
 	
-		$html.="<script>showUrlInDialog('todoLists.php?action=createTodoListForm')</script>";
+		$html.="<script>showUrlInDialog('todoLists.php?action=createTodoListForm', 'new todo list')</script>";
+	}
+        
+        if (isset($_GET['act']) && $_GET['act']=="TdListEditForm"){
+	
+		$html.="<script>showUrlInDialog('todoLists.php?action=TdListEditForm&id=".$_GET['id']."','edit to do list')</script>";
 	}
 	
+        
+        
 	//if user needs to see all the todo list created by him
 	else if (isset($_GET['act']) && $_GET['act']=="allTodoLists"){
 		$auth=new UserAuthenticator();
@@ -46,7 +53,9 @@ function getMyeventsPageHtml(){
 	
 				$html.='<h3><table ><tr><td width="70%">'.$tdlist->title.'</td>
 				<td ><input type="submit"  value="Show" onclick="location.href=\'home.php?act=alltodolistEvents&id='.$tdlist->id.'\'"/></td>
-				<td><input type="submit" value="Delete" onclick="location.href=\'deleteTodolist.php?id='.$tdlist->id.'\'"/></td></tr></table></h3>
+                                <td><input type="submit" value="Edit" onclick="location.href=\'home.php?act=TdListEditForm&id='.$tdlist->id.'\'"/></td>				
+                                <td><input type="submit" value="Delete" onclick="location.href=\'deleteTodolist.php?id='.$tdlist->id.'\'"/></td>
+                                </tr></table></h3>
 				<div>
 					
 				<p>

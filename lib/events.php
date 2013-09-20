@@ -153,11 +153,13 @@ class TodoList extends TodoList_temp{
 	public $id;
 	public $dateCreated;
 	public $dateUpdated;
+        public $publicKey;
 	
-	public function __construct($userId, $id, $title, $description, $dateCreated, $dateUpdated){
+	public function __construct($userId, $id, $title, $description, $dateCreated, $dateUpdated, $publicKey){
                 $this->id=$id;
                 $this->dateCreated=$dateCreated;
                 $this->dateUpdated=$dateUpdated;
+                $this->publicKey=$publicKey;
                 
                 parent::__construct($userId, $title, $description);
         }
@@ -330,7 +332,7 @@ class TodoListManager{
                 $eventsDb=new Events_DB;
                 $result=$eventsDb->getLatestTodoList($this->userId);
                 $row = $result->fetch_array(MYSQLI_NUM);
-                $this->todoLists= new TodoList($row[1], $row[0],$row[2],$row[3],$row[4],$row[5]);
+                $this->todoLists= new TodoList($row[1], $row[0],$row[2],$row[3],$row[4],$row[5],$row[6]);
                 return $this->todoLists;
         }
         
@@ -348,7 +350,7 @@ class TodoListManager{
                         $i=0;
                         while ($row = $result->fetch_array(MYSQLI_NUM))
                         {       
-                                 $this->todoLists[$i]= new TodoList($row[1], $row[0],$row[2],$row[3],$row[4],$row[5]);
+                                 $this->todoLists[$i]= new TodoList($row[1], $row[0],$row[2],$row[3],$row[4],$row[5],$row[6]);
                                  $i=$i+1;
                         }
                         return $this->todoLists;
@@ -368,28 +370,42 @@ class TodoListManager{
                 } else{
                        
                        $row = $result->fetch_array(MYSQLI_NUM);
-                       $todoList= new TodoList($row[1], $row[0],$row[2],$row[3],$row[4],$row[5]);
+                       $todoList= new TodoList($row[1], $row[0],$row[2],$row[3],$row[4],$row[5],$row[6]);
                        return $todoList;
                        
                 }
         }
         
-        /************ tobe shisted to another component*************/
-        public function getTodoListIdsSubcribed(){
+        
+        /*
+        *publish a todo list
+        *@output=>false if fails:bool
+        */
+        public function publishTodoList($todoListId){
                 $eventsDb=new Events_DB;
-                $result=$eventsDb->getTodoSubcriptionsByUid($this->userId);
-                if ($result===false){
-                        return false;
-                } else{
-                        $i=0;
-                        while ($row = $result->fetch_array(MYSQLI_NUM))
-                        {       
-                                 $this->todoListIds[$i]= $row[1];
-                                 $i=$i+1;
-                        }
-                        return $this->todoListIds;
+                
+                //create random string that is not in table
+                $strCreated=false;
+                while(!$strCreated){
+                    $length=10;
+                    $charset='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                    $str = '';
+                    $count = strlen($charset);
+                    while ($length--) {
+                        $str .= $charset[mt_rand(0, $count-1)];
+                    }
+                    
+                 
+                    if($eventsDb->isTodolistKey($str)===false){
+                        $strCreated=true;
+                    }
                 }
+                
+                $result=$eventsDb->publishTodoList($this->userId, $todoListId, $str);
+                return $result;
         }
+        
+        
 }
 
 ?>

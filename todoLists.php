@@ -27,6 +27,17 @@ if ($action=='createTodoListForm'){
        echo $todolistForm->getHtml();
 }
 
+else if($action=='TdListEditForm'){
+       $todolistForm=new TodoListEditForm($_GET['id']);
+       echo $todolistForm->getHtml();
+}
+
+else if($action=='editTodoList'){
+       $todolistForm=new TodoListEditForm($_GET['todoListId']);
+       $todolistForm->submit($_GET);
+       echo $todolistForm->getHtml();
+}
+
 //if user wants to save a todolist
 else if ($action=='saveTodoList'){
        $todolistForm=new TodoListForm();

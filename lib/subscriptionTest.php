@@ -42,9 +42,13 @@ class Subscription_DBTest extends PHPUnit_Framework_TestCase{
 		$eventsDb= new Events_DB;
 		$result= $eventsDb->createTodoList(self::$userId, 'my todoList 1', 'descriptn 1');
 		self::assertTrue($result);
-		$result=$eventsDb->getLatestTodoList(self::$userId);
+                $result=$eventsDb->getLatestTodoList(self::$userId);
 		$row = $result->fetch_array(MYSQLI_NUM);
 		self::$tdListId=$row[0];
+                
+                //publish the todo list
+                $result=$eventsDb->publishTodoList(self::$userId, self::$tdListId, "abcde12345");
+                self::assertTrue($result);
 	}
 	
 	
@@ -57,8 +61,16 @@ class Subscription_DBTest extends PHPUnit_Framework_TestCase{
 	*/
         public function testTodoSubcriptions(){  
                         $id=self::$tdListId;
+                        
+                        
                          //subcribe todoList;
-		        $r= self::$scrDb->subcribeTodoList(self::$userId, self::$tdListId);
+                        $r=self::$scrDb->getTdKeyFromId(self::$tdListId);
+                        $row = $r->fetch_array(MYSQLI_NUM);
+                        $key=$row[0];
+                        $r=self::$scrDb->getTdIdFromKey($key);
+                        $row = $r->fetch_array(MYSQLI_NUM);
+                        $idOfKey=$row[0];
+		        $r= self::$scrDb->subcribeTodoList(self::$userId, $idOfKey);
 		        $this->assertTrue($r);
 		        
 		        //get subciptions by userId
@@ -126,6 +138,10 @@ class TdListSubscribeHandlerTest extends PHPUnit_Framework_TestCase{
 		$result=$eventsDb->getLatestTodoList(self::$userId);
 		$row = $result->fetch_array(MYSQLI_NUM);
 		self::$tdListId=$row[0];
+                
+                //publish the todo list
+                $result=$eventsDb->publishTodoList(self::$userId, self::$tdListId, "abcde12345");
+                self::assertTrue($result);
 	}
 	
 		/*
@@ -140,7 +156,7 @@ class TdListSubscribeHandlerTest extends PHPUnit_Framework_TestCase{
         	
                 $id=self::$tdListId;
                  //subcribe todoList;
-		        $r= self::$scrMan->subscribe($id);
+		        $r= self::$scrMan->subscribe("abcde12345");
 		        $this->assertTrue($r);
 		        
 		        //get subciptions by userId

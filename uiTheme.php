@@ -81,8 +81,8 @@ class JQTheme extends Theme{
 					<script src="js/jquery-ui-1.10.3.custom.js"></script>
 				    <script src="js/form.js"></script>
 				    <script src="js/pureAjax.js"></script>
-				    <script>function showUrlInDialog(url){
-						  var tag = $("<div id=\'dialog\' title=\'New Todo List\' style=\'width:100%\'></div>");
+				    <script>function showUrlInDialog(url,title){
+						  var tag = $("<div id=\'dialog\' title=\'"+ title +"\' style=\'width:100%\'></div>");
 						  $.ajax({
 						    url: url,
 						    success: function(data) {
