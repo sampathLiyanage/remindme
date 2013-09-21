@@ -190,7 +190,18 @@ class Events_DB extends DB_connection{
 		return $this->getSqlResults($stmt);
 	}
 	
+	/*
+	*for getting an event by todoList id and event id
+	*@input=> todoList id:int
+	*@output=> list of events: sql result set
+	*/
+	public function getTodoEvent($todoListId, $eventId){
 	
+		$stmt = $this->prepareSqlStmt( "SELECT * FROM todoList_event WHERE todoList_id=? AND id=?");
+		$stmt->bind_param('ss', $todoListId, $eventId);
+		return $this->getSqlResults($stmt);
+	}
+        
 	/*
 	 *confirm ownership of a todo list
 	

@@ -41,6 +41,18 @@ protected $con;
 		return $stmt;
 	}
 	
+	public function getSqlResults($stmt){
+        	if (!$stmt->execute()){
+        		return false;
+        	}
+        
+        	$results=$stmt->get_result();
+        
+        	if ($results->num_rows==0){
+        		return false;
+        	}
+        	return $results;
+        }
 }
 
 ?>

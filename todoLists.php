@@ -38,6 +38,25 @@ else if($action=='editTodoList'){
        echo $todolistForm->getHtml();
 }
 
+else if($action=='tdEventEditForm'){
+       $eventForm=new TodoEventEditForm($_GET['tdid'],$_GET['eid']);
+       echo $eventForm->getHtml();
+}
+
+else if($action=='editTodoEvent'){
+    
+       $eventForm=new TodoEventEditForm($_GET['todoListId'],$_GET['todoEventId']);
+       $eventForm->submit($_GET);
+       echo $eventForm->getHtml();
+}
+
+else if($action=='newTodoEventForm'){
+    
+       $eventForm=new TodoEventForm();
+        $eventForm->setTdListId($_GET['id']);
+        echo $eventForm->getHtml();
+}
+
 //if user wants to save a todolist
 else if ($action=='saveTodoList'){
        $todolistForm=new TodoListForm();

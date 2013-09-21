@@ -5,6 +5,8 @@
 */
 
 include_once "authenticate.php";
+include_once 'lib/events.php';
+include_once 'uiPages.php';
 
 /*
 * html code for showing events created by a user
@@ -37,74 +39,26 @@ function getMyeventsPageHtml(){
 		$html.="<script>showUrlInDialog('todoLists.php?action=TdListEditForm&id=".$_GET['id']."','edit to do list')</script>";
 	}
 	
+        if (isset($_GET['act']) && isset($_GET['eid']) && isset($_GET['tdid']) && $_GET['act']=="tdEventEditForm"){
+	
+		$html.="<script>showUrlInDialog('todoLists.php?action=tdEventEditForm&eid=".$_GET['eid']."&tdid=".$_GET['tdid']."','edit to do list'); </script>";
+	}
         
+        if (isset($_GET['act']) && $_GET['act']=="newTodoEventForm"){
+	
+		$html.="<script>showUrlInDialog('todoLists.php?action=newTodoEventForm&id=".$_GET['id']."','New Event')</script>";
+	}
         
 	//if user needs to see all the todo list created by him
 	else if (isset($_GET['act']) && $_GET['act']=="allTodoLists"){
-		$auth=new UserAuthenticator();
-		$tdManager= new TodoListManager($auth->getUserId($_SESSION['user'], $_SESSION['pw']));
-		$todolists=$tdManager->getTodoListsOwned();
-	
-		if ($todolists!=false){
-			$html.='<div id="accordion" style="float:left; margin-left:20%; width:50%">';
-			$i=1;
-	
-			foreach ($todolists as $tdlist) {
-	
-				$html.='<h3><table ><tr><td width="70%">'.$tdlist->title.'</td>
-				<td ><input type="submit"  value="Show" onclick="location.href=\'home.php?act=alltodolistEvents&id='.$tdlist->id.'\'"/></td>
-                                <td><input type="submit" value="Edit" onclick="location.href=\'home.php?act=TdListEditForm&id='.$tdlist->id.'\'"/></td>				
-                                <td><input type="submit" value="Delete" onclick="location.href=\'deleteTodolist.php?id='.$tdlist->id.'\'"/></td>
-                                </tr></table></h3>
-				<div>
-					
-				<p>
-				<b>Created on: '.$tdlist->dateCreated.'</b><br>
-				<b>Last update: '.$tdlist->dateUpdated.'</b><br><br>
-				'.$tdlist->description.'
-				</p></div>';
-				$i++;
-	
-			}
-	
-			$html.='</div>';
-		} else{
-			$html.="<h3 style='margin-left:20%;'>Todo lists are empty</h3>";
-		}
+		$todolistPage=new TodoListsPage();
+                $html.=$todolistPage->getHtml();
 	}
 	
 	//if user needs to see all the events in a todo list created by him
-	else if (isset($_GET['act']) && $_GET['act']=="alltodolistEvents" && isset($_GET['id'])){
-		$auth=new UserAuthenticator();
-		$tdManager= new TodoListManager($auth->getUserId($_SESSION['user'], $_SESSION['pw']));
-		$todolist=$tdManager->getTodoListOwned($_GET['id']);
-		$events=$todolist->getEvents();
-	
-		$html.='<div align="center" style="border:1px solid black; margin-left:20%"><p>To do list title: <b>'.$todolist->title.'
-		</b>&emsp;&emsp;&emsp;Created on : <b>'.$todolist->dateCreated.'
-		</b>&emsp;&emsp;&emsp;Updated on : <b>'.$todolist->dateUpdated.'</p></div><br>';
-	
-		if ($events!==false){
-			$html.='
-			<div id="accordion" style="float:left; margin-left:20%; width:30%">';
-			$i=1;
-			foreach ($events as $event) {
-	
-				$html.='<h3><table ><tr><td width="70%">'.$event->dateTime.'</td>
-				<td><input type="submit" value="Delete" onclick="location.href=\'deleteTodoEvent.php?eid='.$event->id.'&tdid='.$todolist->id.'\'"/></td></tr></table></h3>
-				<div >
-				<p>
-				<u><b>'.$event->name.'</b></u><br>'.$event->description.'
-				</p></div>';
-				$i++;
-	
-			}
-			$html.='</div>';
-		} else{
-			$html.="<h3 style='margin-left:20%;'>Todo list is empty</h3>";
-		}
-	
-		$html.='<div id="datepicker" style="float:right"></div>';
+	else if (isset($_GET['act']) && $_GET['act']=="alltodolistEvents"){
+		$todoeventsPage=new TodoEventsPage($_GET);
+                $html.=$todoeventsPage->getHtml();
 	}
 	
 	//return html of the page

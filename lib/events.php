@@ -186,6 +186,26 @@ class TodoList extends TodoList_temp{
         }
         
         /*
+        *get an event from a a todo list
+        *@input=>event id:int
+        *@output=>the event:TodoList_Event  OR false if fails:bool 
+        */
+        public function getEvent($eventId){
+                $eventsDb=new Events_DB;
+                $result=$eventsDb->getTodoEvent($this->id, $eventId);
+                if ($result===false){
+                        return false;
+                } else{
+                        
+                       $row = $result->fetch_array(MYSQLI_NUM);
+                       $event=new TodoList_event($row[1],$row[0],$row[2],$row[3],$row[4]);
+                       return $event;
+                }
+        }
+        
+        
+        
+        /*
         *add event to a todo list
         *@input=>event:TodoList_event_temp
         *@output=>if the event added successfully:bool

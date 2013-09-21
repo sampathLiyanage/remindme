@@ -277,7 +277,7 @@ class TodoListTest  extends PHPUnit_Framework_TestCase{
                 $result=$todoList->addEvent($event);
                 self::assertTrue(!$result->isError);
                 
-                //read the event
+                //read the events
                 $todoListManager=new TodoListManager(self::$userId);
                 $todoList=$todoListManager->getTodoListOwned($todoListId);
                 $events=$todoList->getEvents();
@@ -288,6 +288,13 @@ class TodoListTest  extends PHPUnit_Framework_TestCase{
                 $this->assertTrue($event->name=="mid evolution");
                 $this->assertTrue($event->description=="get ready for the evolution");
                 $this->assertTrue($event->dateTime=="2013-09-20 00:00:00");
+                
+                
+                //read an event
+                $event1=$todoList->getEvent($eventId);
+                $this->assertTrue($event1->name=="mid evolution");
+                $this->assertTrue($event1->description=="get ready for the evolution");
+                $this->assertTrue($event1->dateTime=="2013-09-20 00:00:00");
                 
                 
                 //change the event

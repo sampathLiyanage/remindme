@@ -87,10 +87,11 @@ class JQTheme extends Theme{
 						    url: url,
 						    success: function(data) {
 						      tag.html(data).dialog({modal: true,width: 400,height:400}).dialog(\'open\');
-						      $( "#datepicker" ).datepicker({ dateFormat: "dd-mm-yy" });
+						      $( "#datepicker" ).datepicker({ dateFormat: "yy-mm-dd" });
 						    }
 						  });
 						}</script>
+                                     
 					<script>
           $(function() {
             $( "#tabs" ).tabs();
