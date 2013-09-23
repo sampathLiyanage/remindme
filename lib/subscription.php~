@@ -61,7 +61,7 @@ class TdListSubscribeHandler{
 	* @output=>false if output is 0 rows or error:bool
 	*/
 	public function getSubscribedTdLists(){
-		$result=$this->scrDb->getSubcriptionsByUid($this->userId);
+		$result=$this->scrDb->getRemindSubcriptionsByUid($this->userId);
 		return $result;
 	}
 }

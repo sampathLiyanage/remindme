@@ -58,16 +58,16 @@ class JQTheme extends Theme{
 	}
 	
 	
-	public function addEventsTabHtml($html){
-		$this->html.='<div id="events" style="height:500px">'.$html.'</div>';
+	public function addRemindersTabHtml($html){
+		$this->html.='<div id="Reminders" style="height:600px">'.$html.'</div>';
 	}
 	
 	public function addSubscriptionsTabHtml($html){
-		$this->html.='<div id="subcriptions" style="height:500px">'.$html.'</div>';
+		$this->html.='<div id="subcriptions" style="height:600px">'.$html.'</div>';
 	}
 	
 	public function addProfileTabHtml($html){
-		$this->html.='<div id="profile" style="height:500px">'.$html.'</div>';
+		$this->html.='<div id="profile" style="height:600px">'.$html.'</div>';
 	}
 	
 	protected function getHeader(){
@@ -75,7 +75,7 @@ class JQTheme extends Theme{
 				<html lang="us">
 				<head>
 					<meta charset="utf-8">
-					<title>EventShare</title>
+					<title>RemindMe</title>
 					<link href="css/sunny/jquery-ui-1.10.3.custom.css" rel="stylesheet"/>
 					<script src="js/jquery-1.9.1.js"></script>
 					<script src="js/jquery-ui-1.10.3.custom.js"></script>
@@ -98,8 +98,8 @@ class JQTheme extends Theme{
             
             $( "input[type=submit], a, button" )
               .button()
-              .click(function( event ) {
-                event.preventDefault();
+              .click(function( Reminder ) {
+                Reminder.prReminderDefault();
             });
             
             $( "#menu" ).menu();
@@ -111,7 +111,7 @@ class JQTheme extends Theme{
 		<body>
 		<div id="tabs">
 		  <ul>
-		    <li><a href="#events">My Events</a></li>
+		    <li><a href="#Reminders">Reminders</a></li>
 		    <li><a href="#subcriptions">Subcriptions</a></li>
 		    <li><a href="#profile">Profile</a></li>
 		    <div style="float:right">

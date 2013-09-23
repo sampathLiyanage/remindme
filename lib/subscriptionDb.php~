@@ -42,7 +42,7 @@ class Subscription_DB extends DB_connection{
 	*@input=> remind list id: int
 	*@output=> public key of remind list: string
 	*/
-        public function getKeyFromId($id){
+        public function getTdKeyFromId($id){
             $stmt = $this->prepareSqlStmt( "SELECT public_token FROM remindList WHERE id=?");
             $stmt->bind_param('s', $id);
             return $this->getSqlResults($stmt);

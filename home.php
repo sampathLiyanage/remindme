@@ -9,17 +9,16 @@
 * home page
 */
 
-include_once "lib/auth.php";
-include_once 'lib/events.php';
+
 include_once "authenticate.php";
 include_once "uiTheme.php";
-include_once 'myeventsPage.php';
+include_once 'myRemindersPage.php';
 include_once 'subscriptionsPage.php';
 include_once 'profilePage.php';
 
 
 $page=new JQTheme();
-$page->addEventsTabHtml(getMyeventsPageHtml());
+$page->addRemindersTabHtml(getMyRemindersPageHtml());
 $page->addSubscriptionsTabHtml(getSubscriptionsPageHtml());
 $page->addProfileTabHtml(getProfilePageHtml());
 echo $page->getHtml();

@@ -6,7 +6,7 @@
 
 
 include_once "lib/auth.php";
-include_once "lib/events.php";
+include_once "lib/reminders.php";
 
 /**
 * structure of a class that represents a form
@@ -37,27 +37,27 @@ abstract class Form{
 }
 
 /**
-*represents the form required to create a todo list
+*represents the form required to create a Remind list
 */
-class TodoListForm extends Form{
+class RemindListForm extends Form{
 	
 	protected $titleError='';
 	protected $title='';
 	protected $description='';
-	protected $todoListId='';
+	protected $RemindListId='';
 	
 	public function getHtml(){
-		$html= '<h3>Todo List details</h3>
-		<form id="todoList" action="todoLists.php?action=saveTodoList&" autocomplete="on" >
+		$html= '<h3>Remind-List details</h3>
+		<form id="RemindList" action="reminders.php?action=saveRemindList&" autocomplete="on" >
 		<table>
 		<tr><td>Title: </td><td><input type="text" name="title" value="'.$this->title.'"><br><font color="#FF0000">'.$this->titleError.'</font></td></tr>
 		<tr><td>Desctiption: </td><td><textarea name="description" >'.$this->description.'</textarea></td></tr>
-		<input type="hidden" name="action" value="saveTodoList">
-		<input type="hidden" name="todoListId" value="'.$this->todoListId.'">
+		<input type="hidden" name="action" value="saveRemindList">
+		<input type="hidden" name="RemindListId" value="'.$this->RemindListId.'">
 		<tr><td></td><td><input type="submit" name="submit" value="next" onclick="';
 		
 		$html.="$.ajax({
-		url: 'todoLists.php?'+$('#todoList').serialize(),
+		url: 'reminders.php?'+$('#RemindList').serialize(),
 		success: function(data) {
 		$('#dialog').html(data);
 		$( '#datepicker' ).datepicker({ dateFormat: 'yy-mm-dd' });
@@ -78,9 +78,9 @@ class TodoListForm extends Form{
 		} 
 		$auth= new UserAuthenticator();
                 $userId= $auth->getUserId($_SESSION['user'],$_SESSION['pw']);
-                $tdManager= new TodoListManager($userId);
-                $todoList= new TodoList_temp($userId,$this->title,$this->description);
-                $result=$tdManager->createTodoList($todoList);
+                $tdManager= new RemindListManager($userId);
+                $RemindList= new RemindList_temp($userId,$this->title,$this->description);
+                $result=$tdManager->createRemindList($RemindList);
 
                 if (!$result){
                         header( 'Location: 404.html' ) ;
@@ -114,31 +114,31 @@ class TodoListForm extends Form{
 
 
 /**
-*represents the form required to create an event for a todo list
+*represents the form required to create an Reminder for a Remind list
 */
-class TodoEventForm extends Form{
+class ReminderForm extends Form{
 	protected $name='';
 	protected $description='';
 	protected $date='';
-	protected $todoListId='';
-        protected $todoEventId='';
+	protected $RemindListId='';
+        protected $ReminderId='';
 	
 	protected $nameError='';
 	protected $dateError='';
 	
 	public function getHtml(){
-		$html= '<h3>Event details</h3>
-                  <form id="event" action="todoLists.php?action=addEventToLatest&" autocomplete="on" >
+		$html= '<h3>Reminder details</h3>
+                  <form id="Reminder" action="reminders.php?action=addReminderToLatest&" autocomplete="on" >
                   <table>
                   <tr><td>Name: </td><td><input type="name" name="name" value="'.$this->name.'"><br><font color="#FF0000">'.$this->nameError.'</font></td></tr>
                   <tr><td>Desctiption: </td><td><textarea name="description" >'.$this->description.'</textarea></td></tr>
                   <tr><td>Date: </td><td><input id="datepicker" name="date" value="'.$this->date.'"><br><font color="#FF0000">'.$this->dateError.'</font></td></tr>
-                  <input type="hidden" name="todoListId" value="'.$this->todoListId.'">
-                  <input type="hidden" name="action" value="addEventToLatest">
+                  <input type="hidden" name="RemindListId" value="'.$this->RemindListId.'">
+                  <input type="hidden" name="action" value="addReminderToLatest">
                   <tr><td></td><td><input type="submit" name="submit" value="save and add another" onclick="';
 
         $html.="$.ajax({
-        url: 'todoLists.php?'+$('#event').serialize()+'&submit=saveAndAdd',
+        url: 'reminders.php?'+$('#Reminder').serialize()+'&submit=saveAndAdd',
         success: function(data) {
         $('#dialog').html(data);
         $( '#datepicker' ).datepicker({ dateFormat: 'yy-mm-dd' });
@@ -147,7 +147,7 @@ class TodoEventForm extends Form{
         
         $html.='></td></tr><tr><td></td><td><input type="submit" name="submit" value="close" onclick="';
         
-        $html.="location.href='home.php?act=alltodolistEvents&id=62".$this->todoEventId."'; return false;";
+        $html.="location.href='home.php?act=allRemindlistReminders&id=".$this->RemindListId."'; return false;";
         
         $html.='"></td></tr>';
         $html.='</table>
@@ -157,30 +157,30 @@ class TodoEventForm extends Form{
 	}
 	
 	/*
-	*set todo list id
+	*set Remind list id
 	*/
 	public function setTdListIdtoLatest(){
 		$auth= new UserAuthenticator();
 		$userId= $auth->getUserId($_SESSION['user'],$_SESSION['pw']);
-		$tdManager= new TodoListManager($userId);
+		$tdManager= new RemindListManager($userId);
 		if ($tdManager===false){
 			header( 'Location: 404.html' ) ;
 		}
 		
-		$todoList= $tdManager->getLatestTodoList();
+		$RemindList= $tdManager->getLatestRemindList();
 		
-		if ($todoList==false){
+		if ($RemindList==false){
 			
 			header( 'Location: 404.html' ) ;
 		}
-		$this->todoListId=$todoList->id;
+		$this->RemindListId=$RemindList->id;
 	}
         
         /*
-         * set todo list id
+         * set Remind list id
          */
         public function setTdListId($id){
-            $this->todoListId=$id;
+            $this->RemindListId=$id;
         }
 	
 	/*
@@ -204,9 +204,9 @@ class TodoEventForm extends Form{
 		
 		$auth= new UserAuthenticator();
         $userId= $auth->getUserId($_SESSION['user'],$_SESSION['pw']);
-        $tdManager= new TodoListManager($userId);
-        $todoList= $tdManager->getTodoListOwned($this->todoListId);
-        $result=$todoList->addEvent(new TodoList_event_temp($this->todoListId,$this->name,$this->description,$this->date));
+        $tdManager= new RemindListManager($userId);
+        $RemindList= $tdManager->getRemindListOwned($this->RemindListId);
+        $result=$RemindList->addReminder(new Reminder_temp($this->RemindListId,$this->name,$this->description,$this->date));
         
         if (!$result){
         	header( 'Location: 404.html' ) ;
@@ -225,8 +225,8 @@ class TodoEventForm extends Form{
 				$this->description=$element;
 			} else if($key == 'date'){
 				$this->date=$element;
-			} else if($key == 'todoListId'){
-				$this->todoListId=$element;
+			} else if($key == 'RemindListId'){
+				$this->RemindListId=$element;
 			}
 		}
 		$this->validateName();
@@ -251,7 +251,7 @@ class TodoEventForm extends Form{
 	}
 	
 	private function validateListId(){
-		if ($this->todoListId==''){
+		if ($this->RemindListId==''){
 			$this->error=true;
 			return false;
 		}
@@ -259,20 +259,20 @@ class TodoEventForm extends Form{
 }
 
 /*
- * represents a todo list edit form
+ * represents a Remind list edit form
  */
-class TodoListEditForm extends TodoListForm{
+class RemindListEditForm extends RemindListForm{
     private $html;
     private $submit;
-    public function __construct($todoListId) {
+    public function __construct($RemindListId) {
         $this->submit=false;
         $auth= new UserAuthenticator();
         $userId= $auth->getUserId($_SESSION['user'],$_SESSION['pw']);
-        $tdManager= new TodoListManager($userId);
-        $todoList=$tdManager->getTodoListOwned($todoListId);
-	$this->title=$todoList->title;
-	$this->description=$todoList->description;
-	$this->todoListId=$todoList->id;
+        $tdManager= new RemindListManager($userId);
+        $RemindList=$tdManager->getRemindListOwned($RemindListId);
+	$this->title=$RemindList->title;
+	$this->description=$RemindList->description;
+	$this->RemindListId=$RemindList->id;
         $this->setHtml();
     }
     
@@ -284,11 +284,11 @@ class TodoListEditForm extends TodoListForm{
                 }
 		$auth= new UserAuthenticator();
                 $userId= $auth->getUserId($_SESSION['user'],$_SESSION['pw']);
-                $tdManager= new TodoListManager($userId);
-                $todoList= $tdManager->getTodoListOwned($this->todoListId);
-                $todoList->title=$this->title;
-                $todoList->description=$this->description;
-                $result=$tdManager->changeTodoList($todoList);
+                $tdManager= new RemindListManager($userId);
+                $RemindList= $tdManager->getRemindListOwned($this->RemindListId);
+                $RemindList->title=$this->title;
+                $RemindList->description=$this->description;
+                $result=$tdManager->changeRemindList($RemindList);
 
                 if (!$result){
                         header( 'Location: 404.html' ) ;
@@ -298,17 +298,17 @@ class TodoListEditForm extends TodoListForm{
 	}
         
         private function setHtml(){
-		$this->html= '<h3>Todo List details</h3>
-		<form id="todoList" action="todoLists.php?action=saveTodoList&" autocomplete="on" >
+		$this->html= '<h3>Remind-List details</h3>
+		<form id="RemindList" action="reminders.php?action=saveRemindList&" autocomplete="on" >
 		<table>
 		<tr><td>Title: </td><td><input type="text" name="title" value="'.$this->title.'"><br><font color="#FF0000">'.$this->titleError.'</font></td></tr>
 		<tr><td>Desctiption: </td><td><textarea name="description" >'.$this->description.'</textarea></td></tr>
-		<input type="hidden" name="action" value="editTodoList">
-		<input type="hidden" name="todoListId" value="'.$this->todoListId.'">
+		<input type="hidden" name="action" value="editRemindList">
+		<input type="hidden" name="RemindListId" value="'.$this->RemindListId.'">
 		<tr><td></td><td><input type="submit" name="submit" value="save" onclick="';
 		
 		$this->html.="$.ajax({
-		url: 'todoLists.php?'+$('#todoList').serialize()+'&action=editTodoList',
+		url: 'reminders.php?'+$('#RemindList').serialize()+'&action=editRemindList',
 		success: function(data) {
 		$('#dialog').html(data);
 		$( '#datepicker' ).datepicker({ dateFormat: 'yy-mm-dd' });
@@ -323,8 +323,8 @@ class TodoListEditForm extends TodoListForm{
         
         public function getHtml() {
             if (!$this->error && $this->submit){
-                $this->html='<h3>Todo List Saved</h3><input type="submit" name="submit" value="Close" 
-                    onclick="location.href=\'home.php?act=allTodoLists\'">';
+                $this->html='<h3>Remind List Saved</h3><input type="submit" name="submit" value="Close" 
+                    onclick="location.href=\'home.php?act=allRemindLists\'">';
                 
             } else {
                 $this->setHtml();
@@ -337,23 +337,23 @@ class TodoListEditForm extends TodoListForm{
 
 
 /*
- * represents a todo list event edit form
+ * represents a Remind list Reminder edit form
  */
-class TodoEventEditForm extends TodoEventForm{
+class ReminderEditForm extends ReminderForm{
     private $html;
     private $submit;
-    public function __construct($todoListId, $eventId) {
+    public function __construct($RemindListId, $ReminderId) {
         $this->submit=false;
         $auth= new UserAuthenticator();
         $userId= $auth->getUserId($_SESSION['user'],$_SESSION['pw']);
-        $tdManager= new TodoListManager($userId);
-        $todoList=$tdManager->getTodoListOwned($todoListId);
-        $event=$todoList->getEvent($eventId);
-	$this->name=$event->name;
-	$this->description=$event->description;
-	$this->date=$event->dateTime;
-        $this->todoEventId=$event->id;
-        $this->todoListId=$todoListId;       
+        $tdManager= new RemindListManager($userId);
+        $RemindList=$tdManager->getRemindListOwned($RemindListId);
+        $Reminder=$RemindList->getReminder($ReminderId);
+	$this->name=$Reminder->name;
+	$this->description=$Reminder->description;
+	$this->date=$Reminder->dateTime;
+        $this->ReminderId=$Reminder->id;
+        $this->RemindListId=$RemindListId;       
         $this->setHtml();
     }
     
@@ -365,22 +365,22 @@ class TodoEventEditForm extends TodoEventForm{
                 }
 		$auth= new UserAuthenticator();
                 $userId= $auth->getUserId($_SESSION['user'],$_SESSION['pw']);
-                $tdManager= new TodoListManager($userId);
-                $todoList= $tdManager->getTodoListOwned($this->todoListId);
-                if ($todoList===false){
+                $tdManager= new RemindListManager($userId);
+                $RemindList= $tdManager->getRemindListOwned($this->RemindListId);
+                if ($RemindList===false){
                         header( 'Location: 404.html' ) ;
                 }
                 
-                $event=$todoList->getEvent($this->todoEventId);
-                if ($event===false){
+                $Reminder=$RemindList->getReminder($this->ReminderId);
+                if ($Reminder===false){
                         header( 'Location: 404.html' ) ;
                 }
                 
-                $event->name=$this->name;
-                $event->description=$this->description;
-                $event->dateTime=$this->date;
+                $Reminder->name=$this->name;
+                $Reminder->description=$this->description;
+                $Reminder->dateTime=$this->date;
                 
-                $result=$todoList->changeEvent($event);
+                $result=$RemindList->changeReminder($Reminder);
 
                 if (!$result){
                         header( 'Location: 404.html' ) ;
@@ -390,19 +390,19 @@ class TodoEventEditForm extends TodoEventForm{
 	}
         
         public function setHtml(){
-		$this->html= '<h3>Event details</h3>
-                  <form id="event" action="todoLists.php?action=addEventToLatest&" autocomplete="on" >
+		$this->html= '<h3>Reminder details</h3>
+                  <form id="Reminder" action="reminders.php?action=addReminderToLatest&" autocomplete="on" >
                   <table>
                   <tr><td>Name: </td><td><input type="name" name="name" value="'.$this->name.'"><br><font color="#FF0000">'.$this->nameError.'</font></td></tr>
                   <tr><td>Desctiption: </td><td><textarea name="description" >'.$this->description.'</textarea></td></tr>
                   <tr><td>Date: </td><td><input id="datepicker" name="date" value="'.$this->date.'"><br><font color="#FF0000">'.$this->dateError.'</font></td></tr>
-                  <input type="hidden" name="todoListId" value="'.$this->todoListId.'">
-                  <input type="hidden" name="todoEventId" value="'.$this->todoEventId.'">
-                  <input type="hidden" name="action" value="editTodoEvent">
+                  <input type="hidden" name="RemindListId" value="'.$this->RemindListId.'">
+                  <input type="hidden" name="ReminderId" value="'.$this->ReminderId.'">
+                  <input type="hidden" name="action" value="editReminder">
                   <tr><td></td><td><input type="submit" name="submit" value="save" onclick="';
 
                 $this->html.="$.ajax({
-                url: 'todoLists.php?'+$('#event').serialize(),
+                url: 'reminders.php?'+$('#Reminder').serialize(),
                 success: function(data) {
                 $('#dialog').html(data);
                 $( '#datepicker' ).datepicker({ dateFormat: 'yy-mm-dd' });
@@ -417,8 +417,8 @@ class TodoEventEditForm extends TodoEventForm{
         
         public function getHtml() {
             if (!$this->error && $this->submit){
-                $this->html='<h3>Event Saved</h3><input type="submit" name="submit" value="Close" 
-                    onclick="location.href=\'home.php?act=alltodolistEvents&id='.$this->todoListId.'\'">';
+                $this->html='<h3>Reminder Saved</h3><input type="submit" name="submit" value="Close" 
+                    onclick="location.href=\'home.php?act=allRemindlistReminders&id='.$this->RemindListId.'\'">';
                 
             } else {
                 $this->setHtml();

@@ -17,7 +17,7 @@ protected $con;
 	
 	//constructor - creates mysql connection
 	public function __construct(){
-			$this->con= new mysqli("localhost","root","","eventshare");
+			$this->con= new mysqli("localhost","root","","remindme");
 		
 		// Check connection
 		if (mysqli_connect_errno($this->con)){
