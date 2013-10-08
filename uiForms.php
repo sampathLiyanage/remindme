@@ -7,6 +7,7 @@
 
 include_once "lib/auth.php";
 include_once "lib/reminders.php";
+include_once 'lib/subscription.php';;
 
 /**
 * structure of a class that represents a form
@@ -429,5 +430,82 @@ class ReminderEditForm extends ReminderForm{
         }
 }
 
-
+class SubscriptionForm extends Form{
+    private $token;
+    private $tokenError;
+    public function getHtml(){
+		$html= '<h3>Subscribe</h3>
+		<form id="subscribeForm" action="subscriptions.php?action=subscribe&" autocomplete="on" >
+		<table>
+		<tr><td>Token: </td><td><input type="text" name="token" value="'.$this->token.'"><br><font color="#FF0000">'.$this->tokenError.'</font></td></tr>
+		<tr><td></td><td>
+                <input type="hidden" name="action" value="subscribe">
+                <input type="submit" name="submit" value="Subscribe" onclick="';
+		
+		$html.="$.ajax({
+		url: 'subscriptions.php?'+$('#subscribeForm').serialize(),
+		success: function(data) {
+		$('#dialog').html(data);
+		}
+		}); return false;";
+		
+		$html.='"></td></tr>
+		</table>
+		</form>';
+		
+		return $html;
+	}
+        
+        public function submit($array){
+		$this->validateInputs($array);
+		if ($this->error){
+			return false;
+		} 
+		$auth= new UserAuthenticator();
+                $userId= $auth->getUserId($_SESSION['user'],$_SESSION['pw']);
+		$sMan=new SubscribeHandler($userId);
+                $result=$sMan->subscribe($this->token);
+                
+                if (!$result){
+                        header( 'Location: 404.html' ) ;
+                }
+                $this->tokenError="Successfull";
+                return $result;
+	}
+        
+        protected function validateInputs($array){
+		foreach ($array as $key=>$element)  {
+			$element=htmlspecialchars($element, ENT_QUOTES, 'UTF-8');
+   			 if ($key == 'token') {
+        		$this->token=$element;
+                        } 
+		}
+		
+		$this->validateToken();
+	}
+	
+	private function validateToken(){
+		if (strlen($this->token)!=10){
+			$this->error=true;
+			$this->tokenError="Token length should be 10";
+			return false;
+		}
+                
+                $auth= new UserAuthenticator();
+                $userId= $auth->getUserId($_SESSION['user'],$_SESSION['pw']);
+		$sMan=new SubscribeHandler($userId);
+                if (!($sMan->isToken($this->token))){
+			$this->error=true;
+			$this->tokenError="Invalide token";
+			return false;
+		}
+               
+		$sMan=new SubscribeHandler($userId);
+                if ($sMan->isSubscribed($this->token)){
+			$this->error=true;
+			$this->tokenError="Already subscribed";
+			return false;
+		}
+	}
+}
 ?>

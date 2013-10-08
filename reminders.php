@@ -16,7 +16,7 @@ include_once "authenticate.php";
 
 //if action is not set
 if (!(isset($_GET['action']))){
-        error(); 
+        header( 'Location: 404.html' );
 }
 
 $action=$_GET['action'];

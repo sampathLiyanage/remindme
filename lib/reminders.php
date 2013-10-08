@@ -376,7 +376,16 @@ class RemindListManager{
                 return $result;
         }
         
-        
+        /*
+        *publish a Remind list
+        *@output=>false if fails:bool
+        */
+        public function unpublishRemindList($RemindListId){
+                $RemindersDb=new Reminders_DB;
+                $str=NULL;
+                $result=$RemindersDb->publishRemindList($this->userId, $RemindListId, $str);
+                return $result;
+        }
 }
 
 ?>

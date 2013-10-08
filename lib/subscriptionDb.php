@@ -68,13 +68,21 @@ class Subscription_DB extends DB_connection{
 	*/
 	public function getSubcriptionsByUid($userId){
 	
-		$stmt = $this->prepareSqlStmt( "SELECT * FROM subcription WHERE user_id=?");
+		$stmt = $this->prepareSqlStmt( "SELECT * FROM remindList,subcription WHERE subcription.user_id=? AND remindList_id=id AND remindList.public_token IS NOT NULL");
 		$stmt->bind_param('s', $userId);
 		return $this->getSqlResults($stmt);
 	}
+        
+        public function getSubsByUid($userId,$start,$limit){
+	
+		$stmt = $this->prepareSqlStmt( "SELECT * FROM remindList,subcription WHERE remindList_id=id  AND subcription.user_id=? AND remindList.public_token IS NOT NULL ORDER BY remindList_id DESC LIMIT ?,?");
+		$stmt->bind_param('sss', $userId,$start,$limit);
+		return $this->getSqlResults($stmt);
+	}
+	
 	
 	/*
-	*for getting subcriptions by user id
+	*for getting subcriptions by list id
 	*@input=> user id:int
 	*@output=> list of remindList ids: sql result set
 	*/
@@ -85,6 +93,44 @@ class Subscription_DB extends DB_connection{
 		return $this->getSqlResults($stmt);
 	}
 	
+        public function getSubscribedReminders($userId, $rlistId){
+                $stmt = $this->prepareSqlStmt( "SELECT 
+                    reminder.id, reminder.remindList_id, reminder.name, reminder.description, reminder.date_time
+                    FROM subcription,remindList,reminder WHERE
+                    subcription.remindList_id=remindList.id AND reminder.remindList_id=remindList.id
+                    AND subcription.user_id=? AND remindList.id=?");
+		$stmt->bind_param('ss', $userId, $rlistId);
+		return $this->getSqlResults($stmt);
+        }
+        
+        
+        public function getSubReminderForPage($userId, $rlistId, $start, $limit){
+            $stmt = $this->prepareSqlStmt( "SELECT 
+                reminder.id, reminder.remindList_id, reminder.name, reminder.description, reminder.date_time 
+                FROM subcription,remindList,reminder WHERE
+                subcription.remindList_id=remindList.id AND reminder.remindList_id=remindList.id
+                AND subcription.user_id=? AND remindList.id=?
+                ORDER BY reminder.date_time ASC LIMIT ?,?");
+            $stmt->bind_param('ssss', $userId, $rlistId, $start, $limit);
+            return $this->getSqlResults($stmt);
+        }
+        
+        public function checkToken($token){
+            $stmt = $this->prepareSqlStmt( "SELECT COUNT(*) FROM remindList WHERE public_token=?");
+            $stmt->bind_param('s', $token);
+            return $this->getSqlResults($stmt);
+        }
+        
+        
+        public function isSubscribed($token, $userId){
+            $stmt = $this->prepareSqlStmt( "SELECT COUNT(*) FROM remindList,subcription WHERE public_token=? 
+                AND subcription.user_id=remindList.user_id
+                AND subcription.remindList_id=remindList.id 
+                AND subcription.user_id=?");
+            $stmt->bind_param('ss', $token, $userId);
+            return $this->getSqlResults($stmt);
+        }
+        
 	/*
 	 *deleting all the remindLists
 	*for testing only!

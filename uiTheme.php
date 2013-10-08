@@ -52,9 +52,19 @@ abstract class Theme{
  * theme created with JQuery
  */
 class JQTheme extends Theme{
-	
-	function __construct(){
+	private $urlPara='?';
+        private $tab=0;
+	function __construct($array){
+                foreach ($array as $key=>$element){
+                    
+                    $element=htmlspecialchars($element, ENT_QUOTES, 'UTF-8');
+                    $this->urlPara.=$key.'='.$element.'&';
+                }
+                 if (isset($_COOKIE["tab"])){
+                    $this->tab=$_COOKIE["tab"];
+                }
 		parent::__construct();
+               
 	}
 	
 	
@@ -79,6 +89,7 @@ class JQTheme extends Theme{
 					<link href="css/sunny/jquery-ui-1.10.3.custom.css" rel="stylesheet"/>
 					<script src="js/jquery-1.9.1.js"></script>
 					<script src="js/jquery-ui-1.10.3.custom.js"></script>
+                                        <script src="js/cookie.js"></script>
 				    <script src="js/form.js"></script>
 				    <script src="js/pureAjax.js"></script>
 				    <script>function showUrlInDialog(url,title){
@@ -94,26 +105,33 @@ class JQTheme extends Theme{
                                      
 					<script>
           $(function() {
-            $( "#tabs" ).tabs();
             
+            $( "#accordion" ).accordion();
+             $( "#accordion1" ).accordion();
+            $( "#menu" ).menu();
+            $( "#menu1" ).menu();
+            $( "#tabs" ).tabs();
             $( "input[type=submit], a, button" )
               .button()
               .click(function( Reminder ) {
                 Reminder.prReminderDefault();
             });
             
-            $( "#menu" ).menu();
+            
+            
             $( "#datepicker" ).datepicker();
-            $( "#accordion" ).accordion();
+           $( "#tabs" ).tabs( "option", "active", '.$this->tab.' );
+               
           });
           </script>
 		</head>
 		<body>
-		<div id="tabs">
+		<div id="tabs" style="height:700px">
 		  <ul>
-		    <li><a href="#Reminders">Reminders</a></li>
-		    <li><a href="#subcriptions">Subcriptions</a></li>
-		    <li><a href="#profile">Profile</a></li>
+                  
+		    <li><a id="tab1" href="rem.php'.$this->urlPara.'" onclick="$.cookie(\'tab\', 0);">Reminders</a></li>
+		    <li><a id="tab2" href="sub.php'.$this->urlPara.'" onclick="$.cookie(\'tab\', 1);">Subcriptions</a></li>
+		    <li><a id="tab3" href="#profile'.$this->urlPara.'" onclick="$.cookie(\'tab\', 2);">Profile</a></li>
 		    <div style="float:right">
 		        user: '.$_SESSION["user"].' '.'<input type="submit" value="logout" onclick="location.href=\'logout.php\';">
 		    </div>
@@ -124,7 +142,9 @@ class JQTheme extends Theme{
 	protected function getFooter(){
 		return ' 
 			</div>
+                        
 			</body>
+                        
 			</html>';
 	}
 	

@@ -8,6 +8,7 @@ include_once "authenticate.php";
 include_once 'lib/reminders.php';
 include_once 'uiPages.php';
 
+
 /*
 * html code for showing Reminders created by a user
 *@output=> html code:string
@@ -15,7 +16,6 @@ include_once 'uiPages.php';
 function getMyRemindersPageHtml(){
 	
 	$html='';
-	
 	//if user needs to create a new Remind list
 	if (isset($_GET['act']) && $_GET['act']=="newRemindListForm"){
 	

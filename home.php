@@ -13,14 +13,14 @@
 include_once "authenticate.php";
 include_once "uiTheme.php";
 include_once 'myRemindersPage.php';
+
+
 include_once 'subscriptionsPage.php';
 include_once 'profilePage.php';
 
 
-$page=new JQTheme();
-$page->addRemindersTabHtml(getMyRemindersPageHtml());
-$page->addSubscriptionsTabHtml(getSubscriptionsPageHtml());
-$page->addProfileTabHtml(getProfilePageHtml());
+$page=new JQTheme($_GET);
+
 echo $page->getHtml();
 
 ?>
