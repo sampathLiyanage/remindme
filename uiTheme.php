@@ -131,7 +131,7 @@ class JQTheme extends Theme{
                   
 		    <li><a id="tab1" href="rem.php'.$this->urlPara.'" onclick="$.cookie(\'tab\', 0);">Reminders</a></li>
 		    <li><a id="tab2" href="sub.php'.$this->urlPara.'" onclick="$.cookie(\'tab\', 1);">Subcriptions</a></li>
-		    <li><a id="tab3" href="#profile'.$this->urlPara.'" onclick="$.cookie(\'tab\', 2);">Profile</a></li>
+		    <!--<li><a id="tab3" href="#profile'.$this->urlPara.'" onclick="$.cookie(\'tab\', 2);">Profile</a></li>-->
 		    <div style="float:right">
 		        user: '.$_SESSION["user"].' '.'<input type="submit" value="logout" onclick="location.href=\'logout.php\';">
 		    </div>

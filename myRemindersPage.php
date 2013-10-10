@@ -6,7 +6,7 @@
 
 include_once "authenticate.php";
 include_once 'lib/reminders.php';
-include_once 'uiPages.php';
+include_once "uiPages.php";
 
 
 /*

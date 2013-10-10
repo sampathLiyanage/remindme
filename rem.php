@@ -32,6 +32,8 @@ echo '<script src=\'js/jquery-1.9.1.js"></script>
                                      
 					<script>
           $(function() {
+            $( "#accordion" ).accordion();
+            $( "#menu" ).menu();
             $( "#tabs" ).tabs();
             
             $( "input[type=submit], a, button" )

@@ -22,6 +22,7 @@ if(isset($_SESSION['user']) && isset($_SESSION['pw'])){
         //if user is authenticated
         if($auth->authWithPwHash($_SESSION['user'], $_SESSION['pw'])){
                 header( 'Location: home.php' ) ;
+                exit;
         } 
         //if user is not authenticated
         else{
@@ -74,7 +75,13 @@ background-color:#b0e0e6;
 position:absolute;
 }
 </style>
-	
+<script>
+function maximize() {
+  window.moveTo(0, 0);
+  window.resizeTo(screen.width, screen.height);
+}
+maximize();
+</script>	
 </head>
 <body>
 <h1 align="center" style="color:#b0e0e6">EventShare</h1>
@@ -120,3 +127,5 @@ else if (!($submitReport===false)){
 ?>
 </body>
 </html>
+
+

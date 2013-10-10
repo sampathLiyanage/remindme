@@ -9,9 +9,26 @@
 * when a user creates a Remind list as a sequence of form filling
 */
 
+
+
+include_once "lib/auth.php";
+
+//check authentication
+
+session_start();
+if(isset($_SESSION['user']) && isset($_SESSION['pw'])){
+        $auth=new UserAuthenticator();
+        if(!($auth->authWithPwHash($_SESSION['user'], $_SESSION['pw']))){
+                echo "<a href='http://localhost/remindme' target='_blank'><b>Please login first</b></a>" ;
+                exit;
+        } 
+} else{
+        echo "<a href='http://localhost/remindme' target='_blank'><b>Please login first</b></a>" ;
+        exit;
+}
+
 include_once "uiForms.php";
 //check authentication
-include_once "authenticate.php";
 
 
 //if action is not set
@@ -30,9 +47,6 @@ if ($action=='newsubscription'){
        $sForm->submit($_GET);
        echo $sForm->getHtml();
 }
-
-
-
 
 ?>
 

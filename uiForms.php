@@ -7,7 +7,7 @@
 
 include_once "lib/auth.php";
 include_once "lib/reminders.php";
-include_once 'lib/subscription.php';;
+include_once 'lib/subscription.php';
 
 /**
 * structure of a class that represents a form

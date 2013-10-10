@@ -19,8 +19,12 @@ if(isset($_SESSION['user']) && isset($_SESSION['pw'])){
         $auth=new UserAuthenticator();
         if(!($auth->authWithPwHash($_SESSION['user'], $_SESSION['pw']))){
                 header( 'Location: login.php' ) ;
+                exit;
         } 
 } else{
         header( 'Location: login.php' ) ;
+        exit;
 }
+
+
 ?>

@@ -17,9 +17,6 @@ class Report{
 }
 
 
-
-
-
 /**
 *represents an Reminder before saving in the database
 */	
@@ -387,5 +384,4 @@ class RemindListManager{
                 return $result;
         }
 }
-
 ?>

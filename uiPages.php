@@ -7,7 +7,7 @@
 /***
  * This page contains classes those represent pages
  */
-include_once "authenticate.php";
+
 include_once 'lib/reminders.php';
 include_once 'lib/subscription.php';
 include_once 'lib/auth.php';
@@ -133,13 +133,18 @@ class RemindersPage extends Page{
             $html=  '<div id=leftPanel style="float:left">
             <ul id="menu" style="width: 150px; ">
             <li ><a href="#" onclick="location.href=\'home.php?act=newReminderForm&id='.$this->remindListId.'\'">Add new Reminder</a></li>
-            <li ><a href="#" onclick="location.href=\''.$pbuttonUrl.'\'">'.$publishButton.'</a></li>
-            <li ><a href="#" onclick="location.href=\'home.php?act=allRemindLists\'">Back</a></li>
+            <li ><a href="#" onclick="location.href=\''.$pbuttonUrl.'\'">'.$publishButton.'</a></li>';
+            
+            if ($publishButton=="unpublish"){
+                $html.='<li ><a href="htmlButton.php?token='.$token.'" target="_blank">HTML Button</a></li>';
+            }
+            
+            $html.='<li ><a href="#" onclick="location.href=\'home.php?act=allRemindLists\'">Back</a></li>
             </ul></div>';
             
             $html.='<div><div align="center" style="border:1px solid black; margin-left:20%">
                 <table><tr>
-                <td>To do list title: <b>'.$remindlist->title.'</b></td>
+                <td>Reminder list title: <b>'.$remindlist->title.'</b></td>
                 <td>&emsp;&emsp;&emsp;Created on : <b>'.$remindlist->dateCreated.'</b></td> 
                 <td>&emsp;&emsp;&emsp;Updated on : <b>'.$remindlist->dateUpdated.'</td>
                 </tr><tr>
@@ -152,7 +157,7 @@ class RemindersPage extends Page{
 
             if ($reminders!==false){
                 $html.='<div style="float:left; margin-left:20%; width:50%">page:';
-                
+               
                 for($i=1; $i<=$noOfPages; $i++){
                     $html.='<a onclick="location.href=\'home.php?act=reminders&id='.$this->remindListId.'&page='.$i.'\'">'.$i.'</a>';
                  }
@@ -162,7 +167,7 @@ class RemindersPage extends Page{
                     <div id="accordion" style="float:left; margin-left:20%; width:30%">';
                     $i=1;
                     foreach ($reminders as $reminder) {
-
+                             $reminder->dateTime=substr($reminder->dateTime, 0, 10);
                             $html.='<h3><table ><tr><td width="70%">'.$reminder->dateTime.'</td>
                             <td><input type="submit" value="Edit" onclick="location.href=\'home.php?act=tdReminderEditForm&eid='.$reminder->id.'&tdid='.$remindlist->id.'\'"/></td>
                             <td><input type="submit" value="Delete" onclick="$( \'#dialog-confirm\' ).dialog({
@@ -305,13 +310,13 @@ class SubcribedRemindersPage extends Page{
             
             //menu
             $html=  '<div id=leftPanel style="float:left">
-            <ul id="menu" style="width: 150px; ">
+            <ul id="menu1" style="width: 150px; ">
             <li ><a href="#" onclick="location.href=\'home.php?act=allRemindLists\'">Back</a></li>
             </ul></div>';
             
             $html.='<div><div align="center" style="border:1px solid black; margin-left:20%">
                 <table><tr>
-                <td>To do list title: <b>'.$this->remindListTitle.'</b></td>
+                <td>Reminder list title: <b>'.$this->remindListTitle.'</b></td>
                 </tr><tr>
                 <td>public token : <b>'.$token.'</td>
                 </tr>
@@ -330,7 +335,7 @@ class SubcribedRemindersPage extends Page{
                     <div id="accordion1" style="float:left; margin-left:20%; width:30%">';
                     $i=1;
                     foreach ($reminders as $reminder) {
-
+                            $reminder->dateTime=substr($reminder->dateTime, 0, 10);
                             $html.='<h3><table ><tr><td width="70%">'.$reminder->dateTime.'</td>
                             </tr></table></h3>
                             <div >

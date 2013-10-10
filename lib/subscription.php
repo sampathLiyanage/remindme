@@ -5,7 +5,6 @@
 */
 
 include_once "subscriptionDb.php";
-include_once "lib/reminders.php";
 /**
  * handles subscriptions
  */
