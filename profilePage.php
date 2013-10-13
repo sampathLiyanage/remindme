@@ -10,7 +10,8 @@ include_once "authenticate.php";
 * html code for showing profile of a user
 * @output=> html code:string
 */
-function getProfilePageHtml(){
+function getProfilePageHtml()
+{
 	return '';
 }
 ?>

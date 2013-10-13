@@ -1,60 +1,55 @@
 <?php
 /***
-* developer: sampath liyanage
-* phone no: +94778514847
-*/
+ * developer: sampath liyanage
+ * phone no: +94778514847
+ */
 
 /***
-* login page
-* all the users who are not authenticated redirected here
-*/
+ * login page
+ * all the users who are not authenticated redirected here
+ */
 
 include_once "lib/auth.php";
 
-$loginFailedDialog=false;
-$submitReport=false;
+$loginFailedDialog = false;
+$submitReport      = false;
 
 session_start();
 
 //if username and password are set as sessions
-if(isset($_SESSION['user']) && isset($_SESSION['pw'])){
-        $auth=new UserAuthenticator();
-        //if user is authenticated
-        if($auth->authWithPwHash($_SESSION['user'], $_SESSION['pw'])){
-                header( 'Location: home.php' ) ;
-                exit;
-        } 
-        //if user is not authenticated
-        else{
-        	unset($_SESSION['user']);
-        	unset($_SESSION['pw']);
-        }
-} 
-
-
+if (isset($_SESSION['user']) && isset($_SESSION['pw'])) {
+    $auth = new UserAuthenticator();
+    //if user is authenticated
+    if ($auth->authWithPwHash($_SESSION['user'], $_SESSION['pw'])) {
+        header('Location: home.php');
+        exit;
+    }
+    //if user is not authenticated
+    else {
+        unset($_SESSION['user']);
+        unset($_SESSION['pw']);
+    }
+}
 //if user submit login details
-else if(isset($_POST['username']) && isset($_POST['passwd']) && isset($_POST['submit']) && $_POST['submit']=="login"){
-        $auth=new UserAuthenticator();
-        //if user is authenticated
-        if($auth->authWithPasswd($_POST['username'], $_POST['passwd'])){
-                $_SESSION['user']=$_POST['username'];
-                $_SESSION['pw']=md5($_POST['passwd']);
-                header( 'Location: home.php' ) ;
-        }
-        //if user is not authenticated
-        else{
-                $loginFailedDialog=true;
-        }
+else if (isset($_POST['username']) && isset($_POST['passwd']) && isset($_POST['submit']) && $_POST['submit'] == "login") {
+    $auth = new UserAuthenticator();
+    //if user is authenticated
+    if ($auth->authWithPasswd($_POST['username'], $_POST['passwd'])) {
+        $_SESSION['user'] = $_POST['username'];
+        $_SESSION['pw']   = md5($_POST['passwd']);
+        header('Location: home.php');
+    }
+    //if user is not authenticated
+    else {
+        $loginFailedDialog = true;
+    }
 }
-
 //if user submit signup details
-else if(isset($_POST['username']) && isset($_POST['passwd']) && isset($_POST['email']) && isset($_POST['submit']) && $_POST['submit']=="signup"){
-        $auth=new UserCreator();
-        $report=$auth->createUser($_POST['username'],$_POST['passwd'],$_POST['email']);
-        $submitReport=$report->report;
+else if (isset($_POST['username']) && isset($_POST['passwd']) && isset($_POST['email']) && isset($_POST['submit']) && $_POST['submit'] == "signup") {
+    $auth         = new UserCreator();
+    $report       = $auth->createUser($_POST['username'], $_POST['passwd'], $_POST['email']);
+    $submitReport = $report->report;
 }
-        
-
 ?>
 
 <!doctype html>
@@ -107,22 +102,23 @@ maximize();
 </div></div>
 
 <?php
-if ($loginFailedDialog){
-      echo  "<script>$(function() {
+//if login failed
+if ($loginFailedDialog) {
+    echo "<script>$(function() {
     $( '#dialog' ).dialog();
   });</script>
   <div class='ui-state-highlight' id='dialog' title='Login Failed!!!'>
   <p>Please recheck your username and password</p>
   </div>";
 }
-
-else if (!($submitReport===false)){
-       echo  "<script>$(function() {
+//if an input error occured
+else if (!($submitReport === false)) {
+    echo "<script>$(function() {
     $( '#dialog' ).dialog();
   });</script>
   <div id='dialog' title='signup notification'>
-  <p>".$submitReport."</p>
-  </div>"; 
+  <p>" . $submitReport . "</p>
+  </div>";
 }
 ?>
 </body>

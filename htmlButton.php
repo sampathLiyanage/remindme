@@ -1,5 +1,12 @@
 <?php
+/***
+* developer: sampath liyanage
+* phone no: +94778514847
+*/
 
+/**
+ * widget creation for a published remind-list
+ */
 if (isset($_GET['token'])){
     echo htmlspecialchars('<div id="remindme">');
     echo '<br>';

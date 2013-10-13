@@ -1,13 +1,12 @@
 <?php
 /***
-* developer: sampath liyanage
-* phone no: +94778514847
-*/
+ * developer: sampath liyanage
+ * phone no: +94778514847
+ */
 
 /***
-* home page
-*/
-
+ * reminders tab
+ */
 
 include_once "authenticate.php";
 include_once "uiTheme.php";
@@ -15,12 +14,13 @@ include_once 'myRemindersPage.php';
 include_once 'subscriptionsPage.php';
 include_once 'profilePage.php';
 
-echo '<script src=\'js/jquery-1.9.1.js"></script>
+$html = '';
+$html .= '<script src=\'js/jquery-1.9.1.js"></script>
 					<script src="js/jquery-ui-1.10.3.custom.js"></script>
 				    <script src="js/form.js"></script>
 				    <script src="js/pureAjax.js"></script>
 				    <script>function showUrlInDialog(url,title){
-						  var tag = $("<div id=\'dialog\' title=\'"+ title +"\' style=\'width:100%\'></div>");
+						  var tag = $("<div id=\'dialog\' title=\'"+ title +"\' style=\'width:100% \'></div>");
 						  $.ajax({
 						    url: url,
 						    success: function(data) {
@@ -48,6 +48,8 @@ echo '<script src=\'js/jquery-1.9.1.js"></script>
             
           });
           </script>';
-echo getMyRemindersPageHtml();
 
+//load javascripts needed
+echo $html;
+echo getMyRemindersPageHtml();
 ?>
